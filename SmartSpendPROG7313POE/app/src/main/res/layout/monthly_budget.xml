@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F0F1E"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tvSettingsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BUDGET GOALS"
+        android:textColor="#00FFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:id="@+id/lblMinGoal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Minimum Monthly Goal"
+        android:textColor="#BB86FC"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/tvSettingsTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="48dp"/>
+
+    <EditText
+        android:id="@+id/etMinGoal"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:hint="e.g. R 1,500.00"
+        android:textColorHint="#66FFFFFF"
+        android:textColor="#FFFFFF"
+        android:inputType="numberDecimal"
+        android:backgroundTint="#BB86FC"
+        app:layout_constraintTop_toBottomOf="@id/lblMinGoal"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/lblMaxGoal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Maximum Monthly Goal"
+        android:textColor="#BB86FC"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/etMinGoal"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="32dp"/>
+
+    <EditText
+        android:id="@+id/etMaxGoal"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:hint="e.g. R 10,000.00"
+        android:textColorHint="#66FFFFFF"
+        android:textColor="#FFFFFF"
+        android:inputType="numberDecimal"
+        android:backgroundTint="#BB86FC"
+        app:layout_constraintTop_toBottomOf="@id/lblMaxGoal"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/btnApplyGoals"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="APPLY CONFIGURATION"
+        android:textStyle="bold"
+        android:backgroundTint="#00FFFF"
+        android:textColor="#0F0F1E"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="270dp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#1A1A2E"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button android:id="@+id/btnNavHome" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Home" android:backgroundTint="@android:color/transparent" android:textColor="#FFFFFF"/>
+        <Button android:id="@+id/btnNavEntry" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Add Expense" android:backgroundTint="@android:color/transparent" android:textColor="#00FFFF"/>
+        <Button android:id="@+id/btnNavGoals" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Budget" android:backgroundTint="@android:color/transparent" android:textColor="#FFFFFF"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
