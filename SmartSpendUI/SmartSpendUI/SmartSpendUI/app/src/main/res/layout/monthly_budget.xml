@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F0F1E">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <TextView
+                android:id="@+id/tvBudgetTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="BUDGET GOALS"
+                android:textColor="#00FFFF"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Set Minimum Monthly Goal"
+                android:textColor="#BB86FC"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etMinGoal"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:backgroundTint="#BB86FC"
+                android:hint="e.g. R 1,500.00"
+                android:inputType="numberDecimal"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#66FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Set Maximum Monthly Goal"
+                android:textColor="#BB86FC"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etMaxGoal"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:backgroundTint="#BB86FC"
+                android:hint="e.g. R 10,000.00"
+                android:inputType="numberDecimal"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#66FFFFFF" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="32dp"
+                android:background="#1A1A2E" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="CATEGORY RESTRICTIONS"
+                android:textColor="#00FFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Select Category to Limit"
+                android:textColor="#BB86FC"
+                android:textSize="12sp" />
+
+            <Spinner
+                android:id="@+id/spnCategorySelect"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:background="#BD4C4C"
+                android:backgroundTint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Set Spending Limit for this Category"
+                android:textColor="#BB86FC"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/etCategoryLimit"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:backgroundTint="#BB86FC"
+                android:hint="e.g. R 500.00"
+                android:inputType="numberDecimal"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#66FFFFFF" />
+
+            <Button
+                android:id="@+id/btnSaveBudget"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="40dp"
+                android:backgroundTint="#00FFFF"
+                android:text="SAVE BUDGET PLAN"
+                android:textColor="#0F0F1E"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#1A1A2E"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btnNavHome"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Home"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"/>
+
+        <Button
+            android:id="@+id/btnNavEntry"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Add Expense"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"/>
+
+        <Button
+            android:id="@+id/btnNavBudget"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Budget"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#00FFFF"
+            android:textSize="10sp"/>
+
+        <Button
+            android:id="@+id/btnNavAnalytic"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Analytic"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

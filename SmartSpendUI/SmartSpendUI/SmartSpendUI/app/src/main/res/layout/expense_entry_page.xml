@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F0F1E">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="NEW EXPENSE ENTRY"
+            android:textColor="#00FFFF"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textColor="#BB86FC" />
+
+        <EditText
+            android:id="@+id/etCategory"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="e.g. Groceries, Transport"
+            android:textColorHint="#66FFFFFF"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#BB86FC"
+            android:layout_marginBottom="20dp"/>
+
+        <EditText
+            android:id="@+id/etAmount"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Amount (ZAR)"
+            android:inputType="numberDecimal"
+            android:textColorHint="#66FFFFFF"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#BB86FC"
+            android:layout_marginBottom="20dp"/>
+
+        <EditText
+            android:id="@+id/etDate"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Date (2020-01-15)"
+            android:inputType="date"
+            android:textColorHint="#66FFFFFF"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#BB86FC"
+            android:layout_marginBottom="20dp"/>
+
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Description"
+            android:textColorHint="#66FFFFFF"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#BB86FC"
+            android:layout_marginBottom="32dp"/>
+
+        <Button
+            android:id="@+id/btnTakePhoto"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="ADD PHOTO"
+            android:backgroundTint="#1A1A2E"
+            android:textColor="#BB86FC"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:id="@+id/btnSaveTransaction"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:text="SAVE ENTRY"
+            android:textStyle="bold"
+            android:backgroundTint="#00FFFF"
+            android:textColor="#0F0F1E"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/btnCancelTransaction"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#FF5722"
+            android:text="CANCEL ENTRY"
+            android:textColor="#0F0F1E"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</ScrollView>

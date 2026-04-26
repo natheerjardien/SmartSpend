@@ -1,0 +1,120 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F0F1E">
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#66BB6A"
+        app:srcCompat="@android:drawable/ic_menu_myplaces"
+        tools:layout_editor_absoluteX="355dp"
+        tools:layout_editor_absoluteY="359dp" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="392dp"
+        android:layout_height="17dp"
+        android:progress="80"
+        android:progressTint="#BB86FC"
+        tools:layout_editor_absoluteX="19dp"
+        tools:layout_editor_absoluteY="391dp" />
+
+    <TextView
+        android:layout_width="245dp"
+        android:layout_height="28dp"
+        android:text="BADGE PROGRESS: SAVINGS MASTER"
+        android:textColor="#00FFFF"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="353dp" />
+
+    <View
+        android:id="@+id/cardBalance"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="16dp"
+        android:background="#1A1A2E"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CURRENT ACCOUNT BALANCE"
+        android:textColor="#BB86FC"
+        android:textSize="12sp"
+        app:layout_constraintTop_toTopOf="@id/cardBalance"
+        app:layout_constraintStart_toStartOf="@id/cardBalance"
+        android:layout_margin="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="R 24,500.00"
+        android:textColor="#FFFFFF"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/cardBalance"
+        app:layout_constraintBottom_toBottomOf="@id/cardBalance"
+        app:layout_constraintStart_toStartOf="@id/cardBalance"
+        app:layout_constraintEnd_toEndOf="@id/cardBalance"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MONTHLY BUDGET HEALTH"
+        android:textColor="#BB86FC"
+        android:textSize="12sp"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="259dp" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="367dp"
+        android:layout_height="27dp"
+        android:progress="65"
+        android:progressTint="#00FFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="294dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#1A1A2E"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button android:id="@+id/btnNavHome" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Home" android:backgroundTint="@android:color/transparent" android:textColor="#00FFFF"/>
+        <Button android:id="@+id/btnNavEntry" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Add Expense" android:backgroundTint="@android:color/transparent" android:textColor="#FFFFFF"/>
+        <Button android:id="@+id/btnNavBudget" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Budget" android:backgroundTint="@android:color/transparent" android:textColor="#FFFFFF"/>
+        <Button android:id="@+id/btnNavAnalytic" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Analytic" android:backgroundTint="@android:color/transparent" android:textColor="#FFFFFF"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bungee_inline"
+        android:text="SMART SPEND"
+        android:textColor="#5EC7D1"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="499dp" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#66BB6A"
+        app:srcCompat="@android:drawable/ic_menu_myplaces"
+        tools:layout_editor_absoluteX="355dp"
+        tools:layout_editor_absoluteY="259dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
