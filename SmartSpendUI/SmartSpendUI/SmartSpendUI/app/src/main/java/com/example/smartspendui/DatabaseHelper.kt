@@ -87,25 +87,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.d
         )
     }
 
-    fun getCategoryTotalByDate(startDate: Long, endDate: Long, category: String): Double {
-        val db = this.readableDatabase
-
-        val cursor = db.rawQuery(
-            "SELECT SUM(amount) FROM ExpenseEntity WHERE date >= ? AND date <= ? AND category = ?",
-            arrayOf(startDate.toString(), endDate.toString(), category)
-        )
-        var total = 0.0
-
-        if (cursor.moveToFirst())
-        {
-            total = cursor.getDouble(0)
-        }
-
-        cursor.close()
-
-        return total
-    }
-
     fun getAllExpenses(): Cursor {
         val db = this.readableDatabase
 

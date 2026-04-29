@@ -36,15 +36,28 @@ class ExpenseEntryActivity : AppCompatActivity() {
 
         val getImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                selectedImageUri = result.data?.data
-                ivPreview.setImageURI(selectedImageUri)
+                val uri = result.data?.data
+
+                uri?.let {
+                    contentResolver.takePersistableUriPermission(
+                        it,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                }
+
+                selectedImageUri = uri
+                ivPreview.setImageURI(uri)
                 ivPreview.visibility = View.VISIBLE
-                Log.d("SmartSpend", "Photo attached: $selectedImageUri")
+                Log.d("SmartSpend", "Photo attached: $uri")
             }
         }
 
         btnPhoto.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                type = "image/*"
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            }
             getImage.launch(intent)
         }
 
@@ -70,7 +83,7 @@ class ExpenseEntryActivity : AppCompatActivity() {
     private fun showDatePicker(editText: EditText) {
         val calendar = Calendar.getInstance()
         val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
-            val selectedDate = "$year-${month + 1}-$day"
+            val selectedDate = String.format("%04d-%02d-%02d", year, month + 1, day)
             editText.setText(selectedDate)
             Log.d("SmartSpend", "Date Selected: $selectedDate")
         }
@@ -86,12 +99,22 @@ class ExpenseEntryActivity : AppCompatActivity() {
 
         val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
 
-        val dateLong = try
-        {
-            sdf.parse(date)?.time ?: System.currentTimeMillis()
-        } catch (e: Exception) {
+        val dateLong = try {
+            val parsedDate = sdf.parse(date)
+            val calendar = Calendar.getInstance()
+            calendar.time = parsedDate!!
+
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+
+            calendar.timeInMillis
+        }
+        catch (e: Exception) {
             System.currentTimeMillis()
         }
+
 
         val imagePath = selectedImageUri?.toString() ?: ""
 

@@ -42,7 +42,7 @@ class TransactionDetailActivity : AppCompatActivity() {
                 tvCategory.text = "CATEGORY: ${it.category?.uppercase()}"
                 tvDesc.text = it.description
 
-                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 tvDate.text = "DATE: ${dateFormat.format(Date(it.date))}"
 
                 if (!it.imagePath.isNullOrEmpty())

@@ -22,10 +22,15 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        resetUiForLogic()
+        setupNavigation()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         updateBalance()
         setupProgressBar()
-        setupNavigation()
-        resetUiForLogic()
     }
 
     private fun resetUiForLogic() {

@@ -29,21 +29,36 @@ class FilterSearchActivity : AppCompatActivity() {
             val endDate = etEnd.text.toString()
             val category = spnCategory.selectedItem?.toString() ?: ""
 
-            if (startDate.isEmpty() || endDate.isEmpty()) {
-                Toast.makeText(this, "Please select a date range", Toast.LENGTH_SHORT).show()
+            if (startDate.isNotEmpty() && endDate.isNotEmpty())
+            {
+                val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+
+                val startCal = Calendar.getInstance()
+                startCal.time = sdf.parse(etStart.text.toString())!!
+                startCal.set(Calendar.HOUR_OF_DAY, 0)
+                startCal.set(Calendar.MINUTE, 0)
+                startCal.set(Calendar.SECOND, 0)
+                startCal.set(Calendar.MILLISECOND, 0)
+                val startL = startCal.timeInMillis
+
+                val endCal = Calendar.getInstance()
+                endCal.time = sdf.parse(etEnd.text.toString())!!
+                endCal.set(Calendar.HOUR_OF_DAY, 23)
+                endCal.set(Calendar.MINUTE, 59)
+                endCal.set(Calendar.SECOND, 59)
+                endCal.set(Calendar.MILLISECOND, 999)
+                val endL = endCal.timeInMillis
+
+                val intent = Intent(this, TransactionHistoryActivity::class.java)
+                intent.putExtra("FILTER_START", startL) // This is now exactly 00:00:00 of the start day
+                intent.putExtra("FILTER_END", endL)     // This is now exactly 00:00:00 of the end day
+                intent.putExtra("FILTER_CAT", spnCategory.selectedItem.toString())
+                startActivity(intent)
+                finish()
             }
             else
             {
-                val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
-                val startLong = sdf.parse(startDate)?.time ?: 0L
-                val endLong = sdf.parse(endDate)?.time ?: 0L
-
-                val intent = Intent(this, TransactionHistoryActivity::class.java)
-                intent.putExtra("START_DATE", startLong)
-                intent.putExtra("END_DATE", endLong)
-                intent.putExtra("CATEGORY", category)
-                startActivity(intent)
-                finish()
+                Toast.makeText(this, "Select a date range", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -51,7 +66,7 @@ class FilterSearchActivity : AppCompatActivity() {
     private fun showDatePicker(editText: EditText) {
         val calendar = Calendar.getInstance()
         val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
-            val selectedDate = "$year-${month + 1}-$day"
+            val selectedDate = String.format("%04d-%02d-%02d", year, month + 1, day)
             editText.setText(selectedDate)
             Log.d("SmartSpend", "Date Selected: $selectedDate")
         }
