@@ -13,14 +13,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Calendar
 
-class ExpenseEntryActivity : AppCompatActivity() {
+class ExpenseEntryActivity : AppCompatActivity() { // we created this class to handle the input and storage of new expenses
 
     private var selectedImageUri: Uri? = null
     private lateinit var ivPreview: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.expense_entry_page)
+        setContentView(R.layout.expense_entry_page) // we linked the activity to the expense entry layout
 
         ivPreview = findViewById(R.id.ivPhotoPreview)
         val etCategory = findViewById<EditText>(R.id.etCategory)
@@ -32,8 +32,10 @@ class ExpenseEntryActivity : AppCompatActivity() {
         val btnSave = findViewById<Button>(R.id.btnSaveTransaction)
         val btnCancel = findViewById<Button>(R.id.btnCancelTransaction)
 
+        // we attached a date picker listener to the date input field
         etDate.setOnClickListener { showDatePicker(etDate) }
 
+        // we registered a result launcher to handle picking an image and gaining persistent uri permissions
         val getImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val uri = result.data?.data
@@ -52,6 +54,7 @@ class ExpenseEntryActivity : AppCompatActivity() {
             }
         }
 
+        // we triggered the system document picker to let the user select a receipt photo
         btnPhoto.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 type = "image/*"
@@ -61,6 +64,7 @@ class ExpenseEntryActivity : AppCompatActivity() {
             getImage.launch(intent)
         }
 
+        // we validated the inputs before attempting to save the expense to the database
         btnSave.setOnClickListener {
             val category = etCategory.text.toString()
             val amount = etAmount.text.toString()
@@ -76,11 +80,11 @@ class ExpenseEntryActivity : AppCompatActivity() {
         }
 
         btnCancel.setOnClickListener {
-            finish()
+            finish() // we closed the activity if the user chose to cancel
         }
     }
 
-    private fun showDatePicker(editText: EditText) {
+    private fun showDatePicker(editText: EditText) { // we displayed a calendar dialog to ensure the user selected a valid date format
         val calendar = Calendar.getInstance()
         val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
             val selectedDate = String.format("%04d-%02d-%02d", year, month + 1, day)
@@ -94,11 +98,13 @@ class ExpenseEntryActivity : AppCompatActivity() {
             calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
+    // we converted the inputs and stored the expense record in the database
     private fun saveToDatabase(category: String, amount: String, date: String, description: String) {
         val db = DatabaseHelper(this)
 
         val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
 
+        // we parsed the string date into a long millisecond value for database compatibility
         val dateLong = try {
             val parsedDate = sdf.parse(date)
             val calendar = Calendar.getInstance()
@@ -118,6 +124,7 @@ class ExpenseEntryActivity : AppCompatActivity() {
 
         val imagePath = selectedImageUri?.toString() ?: ""
 
+        // we called the database helper to insert the data and handled the success or failure result
         val result = db.addExpense(
             category,
             amount.toDouble(),

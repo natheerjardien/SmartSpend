@@ -6,21 +6,22 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+// we created this helper class to manage our sqlite database creation and versioning
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.db", null, 1) {
 
-    override fun onCreate(db: SQLiteDatabase) {
+    override fun onCreate(db: SQLiteDatabase) { // we defined the initial schema for both user and expense tables
         db.execSQL("CREATE TABLE UserEntity (uid INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)")
 
         db.execSQL("CREATE TABLE ExpenseEntity (uid INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, amount REAL, date LONG, description TEXT, imagePath TEXT)")
     }
 
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) { // we handled database updates by dropping and recreating the tables
         db.execSQL("DROP TABLE IF EXISTS UserEntity")
         db.execSQL("DROP TABLE IF EXISTS ExpenseEntity")
         onCreate(db)
     }
 
-    fun addUser(username: String, password: String): Long {
+    fun addUser(username: String, password: String): Long { // we implemented a function to insert new user credentials into the database
         val db = this.writableDatabase
 
         val values = ContentValues().apply {
@@ -31,6 +32,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.d
         return db.insert("UserEntity", null, values)
     }
 
+    // we created a method to store new expense entries
     fun addExpense(category: String, amount: Double, date: Long, description: String, imagePath: String): Long {
         val db = this.writableDatabase
 
@@ -45,7 +47,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.d
         return db.insert("ExpenseEntity", null, values)
     }
 
-    fun getExpenseById(id: Int): ExpenseEntity? {
+    fun getExpenseById(id: Int): ExpenseEntity? { // we wrote a query to fetch a single expense based on its unique id
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM ExpenseEntity WHERE uid = ?", arrayOf(id.toString()))
 
@@ -69,7 +71,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.d
     }
 
 
-    fun getExpensesByDateRange(startDate: Long, endDate: Long): Cursor {
+    fun getExpensesByDateRange(startDate: Long, endDate: Long): Cursor { // we added a filter to retrieve expenses within a specific time period
         val db = this.readableDatabase
 
         return db.rawQuery(
@@ -78,6 +80,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.d
         )
     }
 
+    // we implemented a dual filter for both date range and category selection
     fun getExpensesByDateAndCategory(startDate: Long, endDate: Long, category: String): Cursor {
         val db = this.readableDatabase
 
@@ -87,19 +90,19 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.d
         )
     }
 
-    fun getAllExpenses(): Cursor {
+    fun getAllExpenses(): Cursor { // we created a simple query to fetch every recorded expense ordered by date
         val db = this.readableDatabase
 
         return db.rawQuery("SELECT * FROM ExpenseEntity ORDER BY date DESC", null)
     }
 
-    fun getAllUsers(): Cursor {
+    fun getAllUsers(): Cursor { // we fetched the list of all registered users
         val db = this.readableDatabase
 
         return db.rawQuery("SELECT * FROM userEntity", null)
     }
 
-    fun getCategoryTotals(): Cursor {
+    fun getCategoryTotals(): Cursor { // we used the sum and group by functions to calculate totals for each category
         val db = this.readableDatabase
         return db.rawQuery(
             "SELECT category, SUM(amount) FROM ExpenseEntity GROUP BY category",
@@ -107,6 +110,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.d
         )
     }
 
+    // we calculated the grand total spent or the total for a specific category if provided
     fun getTotalSpent(category: String = ""): Double {
         val db = this.readableDatabase
         val cursor: Cursor
@@ -133,7 +137,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.d
         return total
     }
 
-    fun getUniqueCategories(): List<String> {
+    fun getUniqueCategories(): List<String> { // we retrieved a list of all distinct categories found in the database
         val categories = mutableListOf<String>()
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT DISTINCT category FROM ExpenseEntity", null)

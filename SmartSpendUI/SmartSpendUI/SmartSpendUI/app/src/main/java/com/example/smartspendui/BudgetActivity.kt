@@ -6,11 +6,11 @@ import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
-class BudgetActivity : AppCompatActivity() {
+class BudgetActivity : AppCompatActivity() { // we created this class to manage user budget settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.monthly_budget)
+        setContentView(R.layout.monthly_budget) // we linked the layout for the budget configuration page
 
         val etMinGoal = findViewById<EditText>(R.id.etMinGoal)
         val etMaxGoal = findViewById<EditText>(R.id.etMaxGoal)
@@ -18,9 +18,9 @@ class BudgetActivity : AppCompatActivity() {
 
         Log.d("SmartSpend", "BudgetActivity: Initializing view components")
 
-        setupNavigation()
+        setupNavigation() // we initialized the navigation button listeners
 
-        btnSave.setOnClickListener {
+        btnSave.setOnClickListener { // we validated that both input fields contained data
             val min = etMinGoal.text.toString()
             val max = etMaxGoal.text.toString()
 
@@ -30,6 +30,7 @@ class BudgetActivity : AppCompatActivity() {
             }
             else
             {
+                // we saved the budget thresholds into shared preferences for persistent storage
                 val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
                 prefs.edit().apply {
                     putFloat("BUDGET_MIN", min.toFloatOrNull() ?: 0f)
@@ -39,12 +40,12 @@ class BudgetActivity : AppCompatActivity() {
 
                 Log.i("SmartSpend", "Budget Saved: Min R$min, Max R$max")
                 Toast.makeText(this, "Budget Plan Saved Successfully!", Toast.LENGTH_SHORT).show()
-                finish()
+                finish() // we closed the activity after a successful save
             }
         }
     }
 
-    private fun setupNavigation() {
+    private fun setupNavigation() { // we set up intent listeners to navigate to other parts of the application
         findViewById<Button>(R.id.btnNavHome).setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }

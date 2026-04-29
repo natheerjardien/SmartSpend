@@ -46,8 +46,13 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:5.0.5")
 
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:core:1.5.0")
+
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.glide)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
