@@ -39,15 +39,16 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="24dp"
-            android:progress="75"
+            android:progress="0"
             android:progressTint="#00FFFF"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"/>
 
         <TextView
+            android:id="@+id/tvGoalStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="75% of Max Goal Reached"
+            android:text="0% of Max Goal Reached"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:layout_marginBottom="32dp"/>
@@ -60,80 +61,17 @@
             android:textSize="14sp"
             android:layout_marginBottom="16dp"/>
 
-        <RelativeLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCategoryList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:background="#1A1A2E"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Groceries"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="R 3,200.00"
-                android:textColor="#00FFFF"
-                android:textStyle="bold"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:background="#1A1A2E"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Entertainment"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="R 1,500.00"
-                android:textColor="#00FFFF"
-                android:textStyle="bold"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:background="#1A1A2E"
-            android:layout_marginBottom="40dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Transport"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="R 850.00"
-                android:textColor="#00FFFF"
-                android:textStyle="bold"/>
-        </RelativeLayout>
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="16dp"/>
 
         <Button
             android:id="@+id/btnViewLog"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginBottom="24dp"
             android:backgroundTint="#00FFFF"
             android:text="VIEW FULL TRANSACTION LOG"
             android:textColor="#0F0F1E"
@@ -142,6 +80,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/bottomNavBar"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:background="#1A1A2E"

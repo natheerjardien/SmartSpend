@@ -32,12 +32,14 @@
         android:id="@+id/etStartDate"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:hint="YYYY-MM-DD"
+        android:hint="Select Date"
         android:textColorHint="#66FFFFFF"
         android:textColor="#FFFFFF"
         android:backgroundTint="#BB86FC"
         android:focusable="false"
-        app:layout_constraintTop_toBottomOf="@id/lblStartDate" />
+        app:layout_constraintTop_toBottomOf="@id/lblStartDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/lblEndDate"
@@ -53,12 +55,14 @@
         android:id="@+id/etEndDate"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:hint="YYYY-MM-DD"
+        android:hint="Select Date"
         android:textColorHint="#66FFFFFF"
         android:textColor="#FFFFFF"
         android:backgroundTint="#BB86FC"
         android:focusable="false"
-        app:layout_constraintTop_toBottomOf="@id/lblEndDate" />
+        app:layout_constraintTop_toBottomOf="@id/lblEndDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/lblCategory"
@@ -78,7 +82,8 @@
         android:background="#E7E3E3"
         android:backgroundTint="#ECEBEF"
         app:layout_constraintTop_toBottomOf="@id/lblCategory"
-        tools:layout_editor_absoluteX="24dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/btnSearch"
@@ -89,6 +94,8 @@
         android:backgroundTint="#00FFFF"
         android:textColor="#0F0F1E"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="20dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+configurations.all {
+    exclude(group = "com.intellij", module = "annotations")
+}
+
 android {
     namespace = "com.example.smartspendui"
     compileSdk {
@@ -39,12 +43,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
+
+    implementation("com.github.bumptech.glide:glide:5.0.5")
+
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.room.compiler)
+    implementation(libs.glide)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

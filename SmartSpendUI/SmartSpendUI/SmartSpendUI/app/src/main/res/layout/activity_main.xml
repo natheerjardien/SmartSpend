@@ -1,6 +1,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainRootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0F0F1E">
@@ -11,26 +12,34 @@
         android:layout_height="wrap_content"
         android:background="#66BB6A"
         app:srcCompat="@android:drawable/ic_menu_myplaces"
-        tools:layout_editor_absoluteX="355dp"
-        tools:layout_editor_absoluteY="359dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="359dp" />
 
     <ProgressBar
+        android:id="@+id/pbBadgeProgress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="392dp"
         android:layout_height="17dp"
-        android:progress="80"
+        android:progress="0"
         android:progressTint="#BB86FC"
-        tools:layout_editor_absoluteX="19dp"
-        tools:layout_editor_absoluteY="391dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="391dp" />
 
     <TextView
+        android:id="@+id/tvBadgeLabel"
         android:layout_width="245dp"
         android:layout_height="28dp"
         android:text="BADGE PROGRESS: SAVINGS MASTER"
         android:textColor="#00FFFF"
         android:textSize="14sp"
-        tools:layout_editor_absoluteX="36dp"
-        tools:layout_editor_absoluteY="353dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="36dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="353dp" />
 
     <View
         android:id="@+id/cardBalance"
@@ -38,7 +47,7 @@
         android:layout_height="200dp"
         android:layout_margin="16dp"
         android:background="#1A1A2E"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -51,9 +60,10 @@
         android:layout_margin="20dp"/>
 
     <TextView
+        android:id="@+id/tvBalanceAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="R 24,500.00"
+        android:text="R 0.00"
         android:textColor="#FFFFFF"
         android:textSize="34sp"
         android:textStyle="bold"
@@ -63,26 +73,32 @@
         app:layout_constraintEnd_toEndOf="@id/cardBalance"/>
 
     <TextView
+        android:id="@+id/tvHealthLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="MONTHLY BUDGET HEALTH"
         android:textColor="#BB86FC"
         android:textSize="12sp"
-        tools:layout_editor_absoluteX="36dp"
-        tools:layout_editor_absoluteY="259dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="36dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="259dp" />
 
     <ProgressBar
+        android:id="@+id/pbBudgetHealth"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="367dp"
+        android:layout_width="0dp"
         android:layout_height="27dp"
-        android:progress="65"
+        android:progress="0"
         android:progressTint="#00FFFF"
+        android:layout_marginHorizontal="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="294dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="294dp" />
 
     <LinearLayout
+        android:id="@+id/bottomNavBar"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:background="#1A1A2E"
@@ -104,9 +120,9 @@
         android:textColor="#5EC7D1"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="499dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="499dp" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -114,7 +130,9 @@
         android:layout_height="wrap_content"
         android:background="#66BB6A"
         app:srcCompat="@android:drawable/ic_menu_myplaces"
-        tools:layout_editor_absoluteX="355dp"
-        tools:layout_editor_absoluteY="259dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="259dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

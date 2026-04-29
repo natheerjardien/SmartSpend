@@ -16,6 +16,7 @@
             android:id="@+id/btnBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:contentDescription="Navigate back to transaction history"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_revert"
             app:tint="#00FFFF"
@@ -43,7 +44,6 @@
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnBack">
 
@@ -53,8 +53,7 @@
                 android:layout_height="260dp"
                 android:alpha="0.8"
                 android:scaleType="centerCrop"
-                android:src="@drawable/a1___smartspend_logo"
-                tools:srcCompat="@drawable/receipt" />
+                android:src="@drawable/a1___smartspend_logo" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -69,15 +68,12 @@
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
-            android:layout_width="346dp"
-            android:layout_height="256dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
             android:background="#1A1A2E"
             android:orientation="vertical"
             android:padding="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.47"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cvReceiptContainer">
 
             <TextView
@@ -85,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="R 450.00"
+                android:text="R 0.00"
                 android:textColor="#00FFFF"
                 android:textSize="36sp"
                 android:textStyle="bold" />
@@ -96,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="24dp"
-                android:text="CATEGORY: ENTERTAINMENT"
+                android:text="CATEGORY: "
                 android:textColor="#BB86FC"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -119,7 +115,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="Dinner at Restaurant with team"
+                android:text="No description provided"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
 
@@ -145,29 +141,7 @@
                         android:id="@+id/tvDetailDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2026-03-17"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TIME (START - END)"
-                        android:textColor="#BB86FC"
-                        android:textSize="10sp" />
-
-                    <TextView
-                        android:id="@+id/tvDetailTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="19:00 - 21:30"
+                        android:text="YYYY-MM-DD"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>

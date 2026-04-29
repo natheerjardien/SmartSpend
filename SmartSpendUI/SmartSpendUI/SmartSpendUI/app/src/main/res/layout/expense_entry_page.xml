@@ -50,7 +50,7 @@
             android:id="@+id/etDate"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:hint="Date (2020-01-15)"
+            android:hint="Date (YYYY-MM-DD)"
             android:inputType="date"
             android:textColorHint="#66FFFFFF"
             android:textColor="#FFFFFF"
@@ -65,7 +65,15 @@
             android:textColorHint="#66FFFFFF"
             android:textColor="#FFFFFF"
             android:backgroundTint="#BB86FC"
-            android:layout_marginBottom="32dp"/>
+            android:layout_marginBottom="16dp"/>
+
+        <ImageView
+            android:id="@+id/ivPhotoPreview"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            android:scaleType="centerCrop" />
 
         <Button
             android:id="@+id/btnTakePhoto"
