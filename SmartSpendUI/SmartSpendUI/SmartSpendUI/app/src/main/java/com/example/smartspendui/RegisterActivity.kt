@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
+// Medium (2018) demonstrates how to create a functional login and register class
 class RegisterActivity : AppCompatActivity() { // we created this class to handle the registration of new user accounts
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,3 +65,6 @@ class RegisterActivity : AppCompatActivity() { // we created this class to handl
         finish()
     }
 }
+
+// Medium, 2018. How to Create User Interface Login & Register with Android Studio. (Version 2.0) [Source code]
+// Available at: < https://medium.com/muhamadjalaludin/how-to-create-user-interface-login-register-with-android-studio-34da847b05b2 > [Accessed 25 April 2026].

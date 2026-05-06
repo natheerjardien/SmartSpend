@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+// PostHog (2024) demonstrates how to set up  an analytics class
+
 class AnalyticsActivity : AppCompatActivity() { // we created the class to handle the financial data visualization
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,3 +83,5 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
         }
     }
 }
+// PostHog, 2024.  How to set up analytics in Android. (Version 2.0) [Source code]
+// Available at: < https://posthog.com/tutorials/android-analytics > [Accessed 26 April 2026].

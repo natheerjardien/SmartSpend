@@ -9,6 +9,8 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.runner.RunWith
 
+// AndroidDevelopers (2026) demonstrates how to create local unit tests
+
 @RunWith(AndroidJUnit4::class)
 class DatabaseHelperTest {
 
@@ -143,3 +145,6 @@ class DatabaseHelperTest {
         assertEquals("path123", expense?.imagePath)
     }
 }
+
+// AndroidDevelopers, 2026. Build local unit tests. (Version 2.0) [Source code]
+// Available at: < https://developer.android.com/training/testing/local-tests > [Accessed 27 April 2026].

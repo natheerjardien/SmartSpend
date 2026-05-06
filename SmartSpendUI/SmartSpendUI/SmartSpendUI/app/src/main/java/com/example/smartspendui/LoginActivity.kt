@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
+// AndroidKnowledge (2025) demonstrates how to create a functional login class
 // we created this class to handle user authentication and session entry
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,5 +77,5 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
-// AndroidKnowledge, 2025. How to Run Tests in Visual Studio Code: A Complete Guide. (Version 2.0) [Source code]
+// AndroidKnowledge, 2025. Easy Login Page in Android Studio using Java – 5 Steps Only! (Version 2.0) [Source code]
 // Available at: < https://www.geeksforgeeks.org/android/how-to-create-google-sign-in-ui-using-android-studio/ > [Accessed 25 April 2026].

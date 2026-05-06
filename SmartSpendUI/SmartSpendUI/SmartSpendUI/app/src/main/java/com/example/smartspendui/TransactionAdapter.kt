@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
+// GeeksforGeeks (2025) demonstrates how to create a custom adapter class
 // we created this adapter to display our list of transactions in a recyclerview
 class TransactionAdapter(private val expenseList: List<ExpenseEntity>, private val onClick: (Int) -> Unit) :
     RecyclerView.Adapter<TransactionAdapter.ViewHolder>() {
@@ -44,3 +45,7 @@ class TransactionAdapter(private val expenseList: List<ExpenseEntity>, private v
 
     override fun getItemCount() = expenseList.size // we returned the total size of the transaction list
 }
+
+// GeeksforGeeks, 2025. CustomArrayAdapter in Android with Example. (Version 2.0) [Source code]
+// Available at: < https://www.geeksforgeeks.org/android/customarrayadapter-in-android-with-example/ > [Accessed 26 April 2026].
+

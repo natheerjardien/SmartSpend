@@ -8,6 +8,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
+// Medium (2022) demonstrates how to implement a filter by date range function
 // we created this class to allow users to filter their transaction history
 class FilterSearchActivity : AppCompatActivity() {
 
@@ -95,3 +96,5 @@ class FilterSearchActivity : AppCompatActivity() {
         spinner.adapter = adapter
     }
 }
+// Medium, 2022. Simple List with Date Range Filter. (Version 2.0) [Source code]
+// Available at: < https://medium.com/@meytataliti/simple-list-with-date-range-filter-19bd71761495> [Accessed 27 April 2026].

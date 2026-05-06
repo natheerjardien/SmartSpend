@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+// AndroidDeveloper (2025) demonstrates how to save data by making use of SQLite
 // we created this helper class to manage our sqlite database creation and versioning
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.db", null, 1) {
 
@@ -148,3 +149,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.d
         return categories
     }
 }
+
+// AndroidDeveloper, 2025. Save data using SQLite. (Version 2.0) [Source code]
+// Available at: < https://developer.android.com/training/data-storage/sqlite > [Accessed 26 April 2026].

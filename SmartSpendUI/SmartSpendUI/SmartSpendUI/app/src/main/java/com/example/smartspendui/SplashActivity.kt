@@ -7,6 +7,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 
+// GeeksforGeeks (2023) demonstrates how to create a functional splash screen
 class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,3 +26,6 @@ class SplashActivity : AppCompatActivity() {
         }, 3000)
     }
 }
+
+// GeeksforGeeks, 2023. Android | Creating a Splash Screen. (Version 2.0) [Source code]
+// Available at: < https://www.geeksforgeeks.org/android/android-creating-a-splash-screen/ > [Accessed 25 April 2026].
