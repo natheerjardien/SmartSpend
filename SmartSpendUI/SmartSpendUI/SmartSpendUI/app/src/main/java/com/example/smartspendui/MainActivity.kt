@@ -83,18 +83,21 @@ class MainActivity : AppCompatActivity() {
         btnEntry.setOnClickListener {
             Log.d("SmartSpend", "Navigating to ExpenseEntryActivity")
             val intent = Intent(this, ExpenseEntryActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
         }
 
         btnBudget.setOnClickListener {
             Log.d("SmartSpend", "Navigating to BudgetActivity")
             val intent = Intent(this, BudgetActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
         }
 
         btnAnalytic.setOnClickListener {
             Log.d("SmartSpend", "Navigating to AnalyticsActivity")
             val intent = Intent(this, AnalyticsActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
         }
     }

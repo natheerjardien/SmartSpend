@@ -2,20 +2,20 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F0F1E">
+    android:background="#1A000000"
+    android:padding="@dimen/screen_margin" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="vertical" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:text="NEW EXPENSE ENTRY"
-            android:textColor="#00FFFF"
+            android:textColor="#2196F3"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -23,17 +23,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Category"
-            android:textColor="#BB86FC" />
+            android:textColor="#3F51B5" />
 
         <EditText
             android:id="@+id/etCategory"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:hint="e.g. Groceries, Transport"
-            android:textColorHint="#66FFFFFF"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#BB86FC"
+            android:textColorHint="#000000"
+            android:textColor="#000000"
+            android:backgroundTint="#3F51B5"
             android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount"
+            android:textColor="#3F51B5" />
 
         <EditText
             android:id="@+id/etAmount"
@@ -41,30 +47,42 @@
             android:layout_height="55dp"
             android:hint="Amount (ZAR)"
             android:inputType="numberDecimal"
-            android:textColorHint="#66FFFFFF"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#BB86FC"
+            android:textColorHint="#000000"
+            android:textColor="#000000"
+            android:backgroundTint="#3F51B5"
             android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textColor="#3F51B5" />
 
         <EditText
             android:id="@+id/etDate"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="#BB86FC"
             android:hint="Date (YYYY-MM-DD)"
             android:inputType="date"
-            android:textColorHint="#66FFFFFF"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#BB86FC"
-            android:layout_marginBottom="20dp"/>
+            android:textColor="#000000"
+            android:textColorHint="#3F51B5" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textColor="#3F51B5" />
 
         <EditText
             android:id="@+id/etDescription"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:hint="Description"
-            android:textColorHint="#66FFFFFF"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#BB86FC"
+            android:textColorHint="#000000"
+            android:textColor="#000000"
+            android:backgroundTint="#3F51B5"
             android:layout_marginBottom="16dp"/>
 
         <ImageView
@@ -80,8 +98,8 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:text="ADD PHOTO"
-            android:backgroundTint="#1A1A2E"
-            android:textColor="#BB86FC"
+            android:backgroundTint="#3F51B5"
+            android:textColor="#000000"
             android:layout_marginBottom="16dp"/>
 
         <Button
@@ -90,7 +108,7 @@
             android:layout_height="65dp"
             android:text="SAVE ENTRY"
             android:textStyle="bold"
-            android:backgroundTint="#00FFFF"
+            android:backgroundTint="#2196F3"
             android:textColor="#0F0F1E"
             android:layout_marginTop="20dp"/>
 
@@ -99,7 +117,7 @@
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_marginTop="20dp"
-            android:backgroundTint="#FF5722"
+            android:backgroundTint="#F44336"
             android:text="CANCEL ENTRY"
             android:textColor="#0F0F1E"
             android:textStyle="bold" />

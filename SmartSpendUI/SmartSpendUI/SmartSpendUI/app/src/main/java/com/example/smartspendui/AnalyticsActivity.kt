@@ -68,18 +68,27 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
 
     private fun setupNavigation() { // We defined click listeners to navigate between the different app screens
         findViewById<Button>(R.id.btnViewLog)?.setOnClickListener {
+            val intent = Intent(this, TransactionHistoryActivity::class.java)
+            // we added flags to clear the history stack and refresh the page (refreshes the page instead of creating a new instance everytime)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             Log.d("SmartSpend", "Navigating from Analytics to Transaction History")
-            startActivity(Intent(this, TransactionHistoryActivity::class.java))
+            startActivity(intent)
         }
 
         findViewById<Button>(R.id.btnNavHome).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
         findViewById<Button>(R.id.btnNavEntry).setOnClickListener {
-            startActivity(Intent(this, ExpenseEntryActivity::class.java))
+            val intent = Intent(this, ExpenseEntryActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
         findViewById<Button>(R.id.btnNavBudget).setOnClickListener {
-            startActivity(Intent(this, BudgetActivity::class.java))
+            val intent = Intent(this, BudgetActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
     }
 }

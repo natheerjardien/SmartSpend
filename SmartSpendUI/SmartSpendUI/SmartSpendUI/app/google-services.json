@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "61433488070",
+    "firebase_url": "https://bcad3-st10433896-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "bcad3-st10433896",
+    "storage_bucket": "bcad3-st10433896.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61433488070:android:603e394a3b106c5df3adc7",
+        "android_client_info": {
+          "package_name": "com.example.assignmenttracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAgZzVxiFbVTvP38kgis7K8DVAu5CR2MA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61433488070:android:ae99b741a37e1984f3adc7",
+        "android_client_info": {
+          "package_name": "com.example.firebasebasics"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAgZzVxiFbVTvP38kgis7K8DVAu5CR2MA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61433488070:android:3b5be0e544d19f96f3adc7",
+        "android_client_info": {
+          "package_name": "com.example.firebaseseriespart1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAgZzVxiFbVTvP38kgis7K8DVAu5CR2MA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61433488070:android:e0f239a98be9fb4ef3adc7",
+        "android_client_info": {
+          "package_name": "com.example.seriesapifirebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAgZzVxiFbVTvP38kgis7K8DVAu5CR2MA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61433488070:android:65d705ee51b4030ff3adc7",
+        "android_client_info": {
+          "package_name": "com.example.smartspendui"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAgZzVxiFbVTvP38kgis7K8DVAu5CR2MA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

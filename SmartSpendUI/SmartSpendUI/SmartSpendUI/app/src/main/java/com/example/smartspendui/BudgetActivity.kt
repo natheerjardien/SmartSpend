@@ -47,13 +47,19 @@ class BudgetActivity : AppCompatActivity() { // we created this class to manage 
 
     private fun setupNavigation() { // we set up intent listeners to navigate to other parts of the application
         findViewById<Button>(R.id.btnNavHome).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
         findViewById<Button>(R.id.btnNavEntry).setOnClickListener {
-            startActivity(Intent(this, ExpenseEntryActivity::class.java))
+            val intent = Intent(this, ExpenseEntryActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
         findViewById<Button>(R.id.btnNavAnalytic).setOnClickListener {
-            startActivity(Intent(this, AnalyticsActivity::class.java))
+            val intent = Intent(this, AnalyticsActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
     }
 }

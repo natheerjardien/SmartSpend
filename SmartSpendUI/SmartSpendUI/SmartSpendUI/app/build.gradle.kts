@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 configurations.all {
@@ -45,6 +46,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
     implementation("com.github.bumptech.glide:glide:5.0.5")
+    implementation(libs.firebase.database)
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test:runner:1.5.2")

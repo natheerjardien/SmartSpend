@@ -4,56 +4,68 @@
     android:id="@+id/mainRootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F0F1E">
+    android:padding="@dimen/screen_margin"
+    android:background="#1A000000">
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#66BB6A"
-        app:srcCompat="@android:drawable/ic_menu_myplaces"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="32dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="359dp" />
-
-    <ProgressBar
-        android:id="@+id/pbBadgeProgress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="392dp"
-        android:layout_height="17dp"
-        android:progress="0"
-        android:progressTint="#BB86FC"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="391dp" />
+        app:layout_constraintEnd_toEndOf="parent" >
+
+        <ImageView
+          android:id="@+id/imageView4"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="344dp"
+          android:layout_marginEnd="4dp"
+          android:background="#66BB6A"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:srcCompat="@android:drawable/ic_menu_myplaces" />
+
+        <ProgressBar
+          android:id="@+id/pbBadgeProgress"
+          style="?android:attr/progressBarStyleHorizontal"
+          android:layout_width="392dp"
+          android:layout_height="17dp"
+          android:progress="0"
+          android:progressTint="#BB86FC"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          android:layout_marginTop="391dp" />
 
     <TextView
         android:id="@+id/tvBadgeLabel"
         android:layout_width="245dp"
         android:layout_height="28dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="344dp"
         android:text="BADGE PROGRESS: SAVINGS MASTER"
-        android:textColor="#00FFFF"
+        android:textColor="#2196F3"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="36dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="353dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/cardBalance"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_margin="16dp"
-        android:background="#1A1A2E"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@drawable/rounded_card"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="40dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="CURRENT ACCOUNT BALANCE"
-        android:textColor="#BB86FC"
+        android:textColor="#2196F3"
+        android:textStyle="bold"
         android:textSize="12sp"
         app:layout_constraintTop_toTopOf="@id/cardBalance"
         app:layout_constraintStart_toStartOf="@id/cardBalance"
@@ -64,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="R 0.00"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="@id/cardBalance"
@@ -76,13 +88,14 @@
         android:id="@+id/tvHealthLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MONTHLY BUDGET HEALTH"
-        android:textColor="#BB86FC"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="36dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="259dp" />
+        android:layout_marginTop="259dp"
+        android:text="MONTHLY BUDGET HEALTH"
+        android:textColor="#2196F3"
+        android:textSize="12sp"
+        android:textStyle=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/pbBudgetHealth"
@@ -97,42 +110,99 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="294dp" />
 
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/bungee_inline"
+                android:text="SMART SPEND"
+                android:textColor="#2196F3"
+                android:textSize="34sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="499dp" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="256dp"
+                android:layout_marginEnd="16dp"
+                android:background="#66BB6A"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_menu_myplaces" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:id="@+id/bottomNavBar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="70dp"
-        android:background="#1A1A2E"
+        android:background="@drawable/rounded_card"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <Button android:id="@+id/btnNavHome" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Home" android:backgroundTint="@android:color/transparent" android:textColor="#00FFFF"/>
-        <Button android:id="@+id/btnNavEntry" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Add Expense" android:backgroundTint="@android:color/transparent" android:textColor="#FFFFFF"/>
-        <Button android:id="@+id/btnNavBudget" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Budget" android:backgroundTint="@android:color/transparent" android:textColor="#FFFFFF"/>
-        <Button android:id="@+id/btnNavAnalytic" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:text="Analytic" android:backgroundTint="@android:color/transparent" android:textColor="#FFFFFF"/>
+        <Button
+            android:id="@+id/btnNavHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Home"
+            android:textAllCaps="false"
+            android:singleLine="true"
+            android:includeFontPadding="false"
+            android:textSize="11sp"
+            android:gravity="center"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#2196F3" />
+
+        <Button
+            android:id="@+id/btnNavEntry"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Expense"
+            android:textAllCaps="false"
+            android:singleLine="true"
+            android:includeFontPadding="false"
+            android:textSize="11sp"
+            android:gravity="center"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/btnNavBudget"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Budget"
+            android:textAllCaps="false"
+            android:singleLine="true"
+            android:includeFontPadding="false"
+            android:textSize="11sp"
+            android:gravity="center"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/btnNavAnalytic"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Stats"
+            android:textAllCaps="false"
+            android:singleLine="true"
+            android:includeFontPadding="false"
+            android:textSize="11sp"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#000000" />
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/bungee_inline"
-        android:text="SMART SPEND"
-        android:textColor="#5EC7D1"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="499dp" />
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#66BB6A"
-        app:srcCompat="@android:drawable/ic_menu_myplaces"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="259dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,15 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F0F1E"
-    android:padding="32dp">
+    android:background="#1A000000"
+    android:padding="@dimen/screen_margin" >
 
     <TextView
         android:id="@+id/tvRegisterTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="CREATE ACCOUNT"
-        android:textColor="#00FFFF"
+        android:textColor="#2196F3"
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,10 +22,10 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="40dp"
-        android:backgroundTint="#BB86FC"
+        android:backgroundTint="#3F51B5"
         android:hint="Enter Username"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#66FFFFFF"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
         app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle" />
 
     <EditText
@@ -33,11 +33,11 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="#BB86FC"
+        android:backgroundTint="#3F51B5"
         android:hint="Create Password"
         android:inputType="textPassword"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#66FFFFFF"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
         app:layout_constraintTop_toBottomOf="@id/etRegUsername" />
 
     <EditText
@@ -45,11 +45,11 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="#BB86FC"
+        android:backgroundTint="#3F51B5"
         android:hint="Confirm Password"
         android:inputType="textPassword"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#66FFFFFF"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
         app:layout_constraintTop_toBottomOf="@id/etRegPassword" />
 
     <Button
@@ -57,7 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="40dp"
-        android:backgroundTint="#00FFFF"
+        android:backgroundTint="#2196F3"
         android:text="REGISTER"
         android:textColor="#0F0F1E"
         app:layout_constraintTop_toBottomOf="@id/etRegConfirmPassword" />
@@ -69,7 +69,7 @@
         android:layout_marginTop="12dp"
         android:backgroundTint="@android:color/transparent"
         android:text="ALREADY HAVE AN ACCOUNT? LOGIN"
-        android:textColor="#BB86FC"
+        android:textColor="#3F51B5"
         app:layout_constraintTop_toBottomOf="@id/btnRegister" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -88,13 +88,19 @@ class TransactionHistoryActivity : AppCompatActivity() {
 
     private fun setupNavigation() { // we configured the bottom navigation buttons to switch between core app screens
         findViewById<Button>(R.id.btnNavHome).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
         findViewById<Button>(R.id.btnNavEntry).setOnClickListener {
-            startActivity(Intent(this, ExpenseEntryActivity::class.java))
+            val intent = Intent(this, ExpenseEntryActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
         findViewById<Button>(R.id.btnNavBudget).setOnClickListener {
-            startActivity(Intent(this, BudgetActivity::class.java))
+            val intent = Intent(this, BudgetActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
     }
 }

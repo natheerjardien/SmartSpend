@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F0F1E"
-    android:padding="32dp">
+    android:background="#1A000000"
+    android:padding="@dimen/screen_margin" >
 
     <ImageView
         android:id="@+id/ivLogo"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="164dp"
         android:text="SMART SPEND"
-        android:textColor="#00FFFF"
+        android:textColor="#2196F3"
         android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,10 +36,10 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="60dp"
-        android:backgroundTint="#BB86FC"
+        android:backgroundTint="#3F51B5"
         android:hint="Username"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#66FFFFFF"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
         app:layout_constraintTop_toBottomOf="@id/tvLogo" />
 
     <EditText
@@ -47,11 +47,11 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="24dp"
-        android:backgroundTint="#BB86FC"
+        android:backgroundTint="#3F51B5"
         android:hint="Password"
         android:inputType="textPassword"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#66FFFFFF"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
         app:layout_constraintTop_toBottomOf="@id/etUsername" />
 
     <Button
@@ -59,7 +59,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="44dp"
-        android:backgroundTint="#00FFFF"
+        android:backgroundTint="#2196F3"
         android:text="LOGIN"
         android:textColor="#0F0F1E"
         app:layout_constraintTop_toBottomOf="@id/etPassword" />
@@ -69,9 +69,9 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="12dp"
-        android:backgroundTint="#1A1A2E"
+        android:backgroundTint="#3F51B5"
         android:text="REGISTER"
-        android:textColor="#BB86FC"
+        android:textColor="#000000"
         app:layout_constraintTop_toBottomOf="@id/btnLogin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
