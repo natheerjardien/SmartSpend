@@ -19,7 +19,7 @@ class TransactionDetailActivity : AppCompatActivity() {
         setContentView(R.layout.transaction_item_view) // we linked the activity to the detailed item view layout
 
         // we retrieved the unique expense id passed from the previous activity
-        val passedId = intent.getIntExtra("EXPENSE_ID", -1)
+        val passedId = intent.getStringExtra("EXPENSE_ID")
         Log.d("SmartSpend", "TransactionDetailActivity: Detailed view loaded")
 
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
@@ -35,38 +35,43 @@ class TransactionDetailActivity : AppCompatActivity() {
         tvDesc.text = "Loading details..."
         tvDate.text = "DATE: --/--/----"
 
-        val db = DatabaseHelper(this)
+        val db = DatabaseHelper()
 
         // we checked if a valid id was received and queried the database for the specific record
-        if (passedId != -1)
+        if (!passedId.isNullOrEmpty())
         {
-            val expense = db.getExpenseById(passedId)
+            db.getExpenseById(passedId) { expense ->
+                expense?.let {
+                    // we populated the ui components with the retrieved expense data
+                    tvAmount.text = "R ${String.format("%.2f", it.amount)}"
+                    tvCategory.text = "CATEGORY: ${it.category?.uppercase()}"
+                    tvDesc.text = it.description
 
-            expense?.let {
-                // we populated the ui components with the retrieved expense data
-                tvAmount.text = "R ${String.format("%.2f", it.amount)}"
-                tvCategory.text = "CATEGORY: ${it.category?.uppercase()}"
-                tvDesc.text = it.description
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    tvDate.text = "DATE: ${dateFormat.format(Date(it.date))}"
 
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                tvDate.text = "DATE: ${dateFormat.format(Date(it.date))}"
+                    // we used the glide library to asynchronously load and display the receipt image if a path existed
+                    if (!it.imagePath.isNullOrEmpty())
+                    {
+                        val imageUri = android.net.Uri.parse(it.imagePath)
 
-                // we used the glide library to asynchronously load and display the receipt image if a path existed
-                if (!it.imagePath.isNullOrEmpty())
-                {
-                    val imageUri = android.net.Uri.parse(it.imagePath)
-
-                    Glide.with(this)
-                        .load(imageUri)
-                        .placeholder(R.drawable.receipt)
-                        .error(R.drawable.receipt)
-                        .into(ivReceipt)
+                        Glide.with(this)
+                            .load(imageUri)
+                            .placeholder(R.drawable.receipt)
+                            .error(R.drawable.receipt)
+                            .into(ivReceipt)
+                    }
+                } ?: run {
+                    Log.e("SmartSpend", "Expense record not found in Firebase storage")
+                    tvDesc.text = "Error: Record not found."
                 }
             }
+
         }
         else
         {
             Log.e("SmartSpend", "Invalid Expense ID received")
+            tvDesc.text = "Error: Invalid transaction link."
         }
 
         btnBack.setOnClickListener {

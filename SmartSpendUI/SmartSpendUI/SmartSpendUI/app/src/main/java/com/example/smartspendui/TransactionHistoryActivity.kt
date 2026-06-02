@@ -1,7 +1,6 @@
 package com.example.smartspendui
 
 import android.content.Intent
-import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -19,7 +18,7 @@ class TransactionHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.transaction_history_page) // we linked the activity to the transaction history layout
 
-        db = DatabaseHelper(this)
+        db = DatabaseHelper()
         rvTransactions = findViewById(R.id.rvTransactionLog)
         rvTransactions.layoutManager = LinearLayoutManager(this)
 
@@ -44,46 +43,34 @@ class TransactionHistoryActivity : AppCompatActivity() {
         Log.d("SmartSpend", "Filtering: $category from $startDate to $endDate")
 
         // we chose the appropriate database query based on whether date or category filters were active
-        val cursor = when {
+        // and attached our UI adapter updates inside the asynchronous lambda callbacks
+        when {
             startDate != -1L && endDate != -1L && category.isNotEmpty() && category != "All Categories" -> {
-                db.getExpensesByDateAndCategory(startDate, endDate, category)
+                db.getExpensesByDateAndCategory(startDate, endDate, category) { filteredList ->
+                    updateAdapter(filteredList)
+                }
             }
             startDate != -1L && endDate != -1L -> {
-                db.getExpensesByDateRange(startDate, endDate)
+                db.getExpensesByDateRange(startDate, endDate) { dateRangeList ->
+                    updateAdapter(dateRangeList)
+                }
             }
             else -> {
-                db.getAllExpenses()
+                db.getAllExpenses { allExpensesList ->
+                    updateAdapter(allExpensesList)
+                }
             }
-        }
-
-        // we converted the database results into a list of expense objects
-        val expenseList = parseCursorToList(cursor)
-
-        // we updated the recyclerview adapter and defined the click behavior for viewing specific transaction details
-        rvTransactions.adapter = TransactionAdapter(expenseList) { expenseId ->
-            val intent = Intent(this, TransactionDetailActivity::class.java)
-            intent.putExtra("EXPENSE_ID", expenseId)
-            startActivity(intent)
         }
     }
 
-    // we iterated through the database cursor to populate our list of expense entities
-    private fun parseCursorToList(cursor: Cursor): List<ExpenseEntity> {
-        val list = mutableListOf<ExpenseEntity>()
-        if (cursor.moveToFirst()) {
-            do {
-                list.add(ExpenseEntity(
-                    uid = cursor.getInt(0),
-                    category = cursor.getString(1),
-                    amount = cursor.getDouble(2),
-                    date = cursor.getLong(3),
-                    description = cursor.getString(4),
-                    imagePath = cursor.getString(5)
-                ))
-            } while (cursor.moveToNext())
+    // Helper method to attach the fetched cloud list to your the adapter logic
+    private fun updateAdapter(expenseList: List<ExpenseEntity>) {
+        // we updated the recyclerview adapter and defined the click behavior for viewing specific transaction details
+        rvTransactions.adapter = TransactionAdapter(expenseList) { expenseId ->
+            val intent = Intent(this, TransactionDetailActivity::class.java)
+            intent.putExtra("EXPENSE_ID", expenseId) // expenseId is now passed cleanly as a String
+            startActivity(intent)
         }
-        cursor.close() // we ensured the cursor was closed after processing the data
-        return list
     }
 
     private fun setupNavigation() { // we configured the bottom navigation buttons to switch between core app screens

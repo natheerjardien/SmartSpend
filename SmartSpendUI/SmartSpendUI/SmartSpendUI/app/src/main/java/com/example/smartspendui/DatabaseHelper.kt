@@ -1,154 +1,179 @@
 package com.example.smartspendui
 
-import android.content.ContentValues
-import android.content.Context
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
-// AndroidDeveloper (2025) demonstrates how to save data by making use of SQLite
-// we created this helper class to manage our sqlite database creation and versioning
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "SmartSpend.db", null, 1) {
+class DatabaseHelper {
 
-    override fun onCreate(db: SQLiteDatabase) { // we defined the initial schema for both user and expense tables
-        db.execSQL("CREATE TABLE UserEntity (uid INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)")
+    // Get reference to the root of your Firebase Database
+    private val database = FirebaseDatabase.getInstance("https://bcad3-st10433896-default-rtdb.asia-southeast1.firebasedatabase.app").reference
 
-        db.execSQL("CREATE TABLE ExpenseEntity (uid INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, amount REAL, date LONG, description TEXT, imagePath TEXT)")
-    }
-
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) { // we handled database updates by dropping and recreating the tables
-        db.execSQL("DROP TABLE IF EXISTS UserEntity")
-        db.execSQL("DROP TABLE IF EXISTS ExpenseEntity")
-        onCreate(db)
-    }
-
-    fun addUser(username: String, password: String): Long { // we implemented a function to insert new user credentials into the database
-        val db = this.writableDatabase
-
-        val values = ContentValues().apply {
-            put("username", username)
-            put("password", password)
-        }
-
-        return db.insert("UserEntity", null, values)
-    }
-
-    // we created a method to store new expense entries
-    fun addExpense(category: String, amount: Double, date: Long, description: String, imagePath: String): Long {
-        val db = this.writableDatabase
-
-        val values = ContentValues().apply {
-            put("category", category)
-            put("amount", amount)
-            put("date", date)
-            put("description", description)
-            put("imagePath", imagePath)
-        }
-
-        return db.insert("ExpenseEntity", null, values)
-    }
-
-    fun getExpenseById(id: Int): ExpenseEntity? { // we wrote a query to fetch a single expense based on its unique id
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM ExpenseEntity WHERE uid = ?", arrayOf(id.toString()))
-
-        var expense: ExpenseEntity? = null
-
-        if (cursor.moveToFirst())
-        {
-            expense = ExpenseEntity(
-                cursor.getInt(0),
-                cursor.getString(1),
-                cursor.getDouble(2),
-                cursor.getLong(3),
-                cursor.getString(4),
-                cursor.getString(5)
-            )
-        }
-
-        cursor.close()
-
-        return expense
-    }
-
-
-    fun getExpensesByDateRange(startDate: Long, endDate: Long): Cursor { // we added a filter to retrieve expenses within a specific time period
-        val db = this.readableDatabase
-
-        return db.rawQuery(
-            "SELECT * FROM ExpenseEntity WHERE date >= ? AND date <= ? ORDER BY date DESC",
-            arrayOf(startDate.toString(), endDate.toString())
+    // 1. Add User
+    fun addUser(username: String, password: String, firstName: String, lastName: String, onResult: (Boolean) -> Unit) {
+        val userId = database.child("users").push().key ?: return onResult(false)
+        val user = UserEntity(
+            uid = userId,
+            username = username,
+            password = password,
+            firstName = firstName,
+            lastName = lastName
         )
+
+        database.child("users").child(userId).setValue(user)
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
     }
 
-    // we implemented a dual filter for both date range and category selection
-    fun getExpensesByDateAndCategory(startDate: Long, endDate: Long, category: String): Cursor {
-        val db = this.readableDatabase
 
-        return db.rawQuery(
-            "SELECT * FROM ExpenseEntity WHERE date >= ? AND date <= ? AND category = ? ORDER BY date DESC",
-            arrayOf(startDate.toString(), endDate.toString(), category)
-        )
+
+    // 2. Add Expense
+    fun addExpense(
+        category: String,
+        amount: Double,
+        date: Long,
+        description: String,
+        imagePath: String,
+        onResult: (Boolean) -> Unit
+    ) {
+        val expenseId = database.child("expenses").push().key ?: return onResult(false)
+        val expense = ExpenseEntity(expenseId, category, amount, date, description, imagePath)
+
+        database.child("expenses").child(expenseId).setValue(expense)
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
     }
 
-    fun getAllExpenses(): Cursor { // we created a simple query to fetch every recorded expense ordered by date
-        val db = this.readableDatabase
-
-        return db.rawQuery("SELECT * FROM ExpenseEntity ORDER BY date DESC", null)
-    }
-
-    fun getAllUsers(): Cursor { // we fetched the list of all registered users
-        val db = this.readableDatabase
-
-        return db.rawQuery("SELECT * FROM userEntity", null)
-    }
-
-    fun getCategoryTotals(): Cursor { // we used the sum and group by functions to calculate totals for each category
-        val db = this.readableDatabase
-        return db.rawQuery(
-            "SELECT category, SUM(amount) FROM ExpenseEntity GROUP BY category",
-            null
-        )
-    }
-
-    // we calculated the grand total spent or the total for a specific category if provided
-    fun getTotalSpent(category: String = ""): Double {
-        val db = this.readableDatabase
-        val cursor: Cursor
-
-        if (category.isEmpty())
-        {
-            cursor = db.rawQuery("SELECT SUM(amount) FROM ExpenseEntity", null)
+    // 3. Get Expense By ID
+    fun getExpenseById(id: String, onResult: (ExpenseEntity?) -> Unit) {
+        database.child("expenses").child(id).get().addOnSuccessListener { snapshot ->
+            val expense = snapshot.getValue(ExpenseEntity::class.java)
+            onResult(expense)
+        }.addOnFailureListener {
+            onResult(null)
         }
-        else
-        {
-            cursor = db.rawQuery(
-                "SELECT SUM(amount) FROM ExpenseEntity WHERE category = ?",
-                arrayOf(category)
-            )
-        }
-
-        var total = 0.0
-
-        if (cursor.moveToFirst())
-        {
-            total = cursor.getDouble(0)
-        }
-        cursor.close()
-        return total
     }
 
-    fun getUniqueCategories(): List<String> { // we retrieved a list of all distinct categories found in the database
-        val categories = mutableListOf<String>()
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT DISTINCT category FROM ExpenseEntity", null)
-        if (cursor.moveToFirst()) {
-            do { categories.add(cursor.getString(0)) } while (cursor.moveToNext())
+    // 4. Fetch All Expenses (Ordered by Date)
+    fun getAllExpenses(onResult: (List<ExpenseEntity>) -> Unit) {
+        database.child("expenses").orderByChild("date")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val expenses = mutableListOf<ExpenseEntity>()
+                    // Firebase orders ascending by default, we reverse to mirror your original DESC order
+                    for (child in snapshot.children) {
+                        child.getValue(ExpenseEntity::class.java)?.let { expenses.add(it) }
+                    }
+                    onResult(expenses.reversed())
+                }
+                override fun onCancelled(error: DatabaseError) { onResult(emptyList()) }
+            })
+    }
+
+    // 5. Get Expenses by Date Range
+    fun getExpensesByDateRange(startDate: Long, endDate: Long, onResult: (List<ExpenseEntity>) -> Unit) {
+        database.child("expenses").orderByChild("date")
+            .startAt(startDate.toDouble())
+            .endAt(endDate.toDouble())
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val expenses = mutableListOf<ExpenseEntity>()
+                    for (child in snapshot.children) {
+                        child.getValue(ExpenseEntity::class.java)?.let { expenses.add(it) }
+                    }
+                    onResult(expenses.reversed())
+                }
+                override fun onCancelled(error: DatabaseError) { onResult(emptyList()) }
+            })
+    }
+
+    // 6. Get Expenses by Date and Category
+    // Note: Firebase Realtime DB doesn't cleanly support multi-property queries natively without composite keys.
+    // The easiest approach is filtering the category client-side from the date range results.
+    fun getExpensesByDateAndCategory(
+        startDate: Long,
+        endDate: Long,
+        category: String,
+        onResult: (List<ExpenseEntity>) -> Unit
+    ) {
+        getExpensesByDateRange(startDate, endDate) { expenses ->
+            val filtered = expenses.filter { it.category.equals(category, ignoreCase = true) }
+            onResult(filtered)
         }
-        cursor.close()
-        return categories
+    }
+
+    // 7. Get Total Spent (Grand total or Category total)
+    fun getTotalSpent(category: String = "", onResult: (Double) -> Unit) {
+        database.child("expenses").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var total = 0.0
+                for (child in snapshot.children) {
+                    val expense = child.getValue(ExpenseEntity::class.java)
+                    if (expense != null) {
+                        if (category.isEmpty() || expense.category.equals(category, ignoreCase = true)) {
+                            total += expense.amount
+                        }
+                    }
+                }
+                onResult(total)
+            }
+            override fun onCancelled(error: DatabaseError) { onResult(0.0) }
+        })
+    }
+
+    // 8. Get Unique Categories
+    fun getUniqueCategories(onResult: (List<String>) -> Unit) {
+        database.child("expenses").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val categories = mutableSetOf<String>()
+                for (child in snapshot.children) {
+                    child.getValue(ExpenseEntity::class.java)?.let { categories.add(it.category) }
+                }
+                onResult(categories.toList())
+            }
+            override fun onCancelled(error: DatabaseError) { onResult(emptyList()) }
+        })
+    }
+
+    // 9. Get All Users
+    fun getAllUsers(onResult: (List<UserEntity>) -> Unit) {
+        // Explicitly target the correct node path
+        database.child("users").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val usersList = mutableListOf<UserEntity>()
+
+                if (snapshot.exists()) {
+                    for (child in snapshot.children) {
+                        try {
+                            // Extract properties manually to shield against data class casting failures
+                            val uid = child.child("uid").value?.toString() ?: ""
+                            val username = child.child("username").value?.toString() ?: ""
+                            val password = child.child("password").value?.toString() ?: ""
+                            val firstName = child.child("firstName").value?.toString() ?: ""
+                            val lastName = child.child("lastName").value?.toString() ?: ""
+
+                            // Only add valid structural entities to our validation list
+                            if (username.isNotEmpty() && password.isNotEmpty()) {
+                                val user = UserEntity(uid, username, password, firstName, lastName)
+                                usersList.add(user)
+                            }
+                        } catch (e: Exception) {
+                            android.util.Log.e("SmartSpendDB", "Error mapping individual user node: ${e.message}")
+                        }
+                    }
+                } else {
+                    android.util.Log.w("SmartSpendDB", "Read complete: The 'UserEntity' node is completely missing or empty in the cloud.")
+                }
+
+                // Send the finalized list back to the Login Activity callback hook
+                onResult(usersList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                android.util.Log.e("SmartSpendDB", "Firebase cloud read canceled or blocked: ${error.message}")
+                onResult(emptyList())
+            }
+        })
     }
 }
-
-// AndroidDeveloper, 2025. Save data using SQLite. (Version 2.0) [Source code]
-// Available at: < https://developer.android.com/training/data-storage/sqlite > [Accessed 26 April 2026].

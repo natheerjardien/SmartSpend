@@ -47,6 +47,7 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:5.0.5")
     implementation(libs.firebase.database)
+    implementation("com.google.firebase:firebase-database-ktx:21.0.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test:runner:1.5.2")

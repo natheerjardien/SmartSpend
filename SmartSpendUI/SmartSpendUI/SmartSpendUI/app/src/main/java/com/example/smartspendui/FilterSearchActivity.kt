@@ -85,15 +85,19 @@ class FilterSearchActivity : AppCompatActivity() {
     }
 
     private fun populateCategorySpinner(spinner: Spinner) { // we fetched unique categories from the database to fill the spinner
-        val db = DatabaseHelper(this)
-        val categories = db.getUniqueCategories().toMutableList()
+        val db = DatabaseHelper()
 
-        // we added a placeholder if no expenses have been recorded yet
-        if (categories.isEmpty()) categories.add("No Expenses Yet")
+        db.getUniqueCategories { categoriesFromFirebase ->
+            val categories = categoriesFromFirebase.toMutableList()
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
+            // we added a placeholder if no expenses have been recorded yet
+            if (categories.isEmpty()) categories.add("No Expenses Yet")
+
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
+        }
+
     }
 }
 // Medium, 2022. Simple List with Date Range Filter. (Version 2.0) [Source code]

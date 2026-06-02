@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 // GeeksforGeeks (2025) demonstrates how to create a custom adapter class
 // we built this adapter to bridge our database results and the recyclerview
-class CategoryAdapter(private val cursor: Cursor) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
+class CategoryAdapter(private val categoryTotals: Map<String, Double>) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
+
+    private val categoriesList = categoryTotals.keys.toList()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) { // we defined the viewholder to hold references to the row layout elements
         val tvName: TextView = view.findViewById(R.id.tvCategoryRowName)
@@ -22,16 +24,16 @@ class CategoryAdapter(private val cursor: Cursor) : RecyclerView.Adapter<Categor
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) { // we bound the specific database record to the textviews based on the current list position
-        if (cursor.moveToPosition(position))
-        {
-            val name = cursor.getString(0)
-            val total = cursor.getDouble(1)
+
+            val name = categoriesList[position]
+            val total = categoryTotals[name] ?: 0.0
+
             holder.tvName.text = name
             holder.tvTotal.text = "R${String.format("%.2f", total)}"
-        }
+
     }
 
-    override fun getItemCount(): Int = cursor.count // we returned the total number of items from the database cursor
+    override fun getItemCount(): Int = categoriesList.size // we returned the total number of items from the database cursor
 }
 // GeeksforGeeks, 2025. CustomArrayAdapter in Android with Example. (Version 2.0) [Source code]
 // Available at: < https://www.geeksforgeeks.org/android/customarrayadapter-in-android-with-example/ > [Accessed 26 April 2026].

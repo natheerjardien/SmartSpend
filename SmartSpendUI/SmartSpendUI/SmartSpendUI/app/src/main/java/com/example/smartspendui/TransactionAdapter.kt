@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 // GeeksforGeeks (2025) demonstrates how to create a custom adapter class
 // we created this adapter to display our list of transactions in a recyclerview
-class TransactionAdapter(private val expenseList: List<ExpenseEntity>, private val onClick: (Int) -> Unit) :
+class TransactionAdapter(private val expenseList: List<ExpenseEntity>, private val onClick: (String) -> Unit) :
     RecyclerView.Adapter<TransactionAdapter.ViewHolder>() {
 
     // we defined the viewholder to link the specific ui elements for each transaction row

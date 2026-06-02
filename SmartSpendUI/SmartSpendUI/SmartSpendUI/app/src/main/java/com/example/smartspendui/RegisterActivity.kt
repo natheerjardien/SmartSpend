@@ -17,13 +17,20 @@ class RegisterActivity : AppCompatActivity() { // we created this class to handl
 
         val etUsername = findViewById<EditText>(R.id.etRegUsername)
         val etPassword = findViewById<EditText>(R.id.etRegPassword)
+        val etFirstName = findViewById<EditText>(R.id.etFirstName)
+        val etLastName = findViewById<EditText>(R.id.etLastName)
         val etConfirmPassword = findViewById<EditText>(R.id.etRegConfirmPassword)
         val btnRegister = findViewById<Button>(R.id.btnRegister)
         val btnBackToLogin = findViewById<Button>(R.id.btnBackToLogin)
 
+
         btnRegister.setOnClickListener {
             val user = etUsername.text.toString().trim()
             val pass = etPassword.text.toString().trim()
+            val firstName = etFirstName.text.toString().trim()
+            val lastName = etLastName.text.toString().trim()
+
+
             val confirmPass = etConfirmPassword.text.toString().trim()
 
             // we checked if any of the required input fields were left empty
@@ -42,7 +49,7 @@ class RegisterActivity : AppCompatActivity() { // we created this class to handl
                 return@setOnClickListener
             }
 
-            saveUserToDatabase(user, pass) // we proceeded to save the validated user details to the database
+            saveUserToDatabase(user, pass, firstName, lastName) // we proceeded to save the validated user details to the database
         }
 
         btnBackToLogin.setOnClickListener { // we closed the activity to return the user to the previous login screen
@@ -52,17 +59,23 @@ class RegisterActivity : AppCompatActivity() { // we created this class to handl
     }
 
     // we implemented a helper method to store user credentials in the database
-    private fun saveUserToDatabase(user: String, pass: String) {
+    private fun saveUserToDatabase(user: String, pass: String, firstName: String, lastName: String) {
         Log.i("SmartSpend", "Saving new user $user to Database")
 
-        Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_SHORT).show()
+        val db = DatabaseHelper()
+        db.addUser(user, pass, firstName, lastName) { isSuccess ->
+            if(isSuccess) {
+                Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_SHORT).show()
+                // we navigated the user back to the login screen after successful registration
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            } else {
+                Toast.makeText(this, "Registration failed. Cloud server error.", Toast.LENGTH_SHORT).show()
+                Log.e("SmartSpend", "Firebase authentication node push failed for $user")
+            }
+        }
 
-        val db = DatabaseHelper(this)
-        db.addUser(user, pass)
 
-        // we navigated the user back to the login screen after successful registration
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
     }
 }
 

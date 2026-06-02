@@ -11,12 +11,22 @@ import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.Firebase
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.database
 import java.util.Calendar
 
 class ExpenseEntryActivity : AppCompatActivity() { // we created this class to handle the input and storage of new expenses
 
     private var selectedImageUri: Uri? = null
     private lateinit var ivPreview: ImageView
+
+    private lateinit var rootNode: FirebaseDatabase
+
+    private lateinit var expenseReference: DatabaseReference
+
+    private var id = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,47 +110,36 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
 
     // we converted the inputs and stored the expense record in the database
     private fun saveToDatabase(category: String, amount: String, date: String, description: String) {
-        val db = DatabaseHelper(this)
+        val db = DatabaseHelper() // No longer requires 'this' context passed in!
 
         val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
 
-        // we parsed the string date into a long millisecond value for database compatibility
         val dateLong = try {
             val parsedDate = sdf.parse(date)
             val calendar = Calendar.getInstance()
             calendar.time = parsedDate!!
-
             calendar.set(Calendar.HOUR_OF_DAY, 0)
             calendar.set(Calendar.MINUTE, 0)
             calendar.set(Calendar.SECOND, 0)
             calendar.set(Calendar.MILLISECOND, 0)
-
             calendar.timeInMillis
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             System.currentTimeMillis()
         }
 
-
         val imagePath = selectedImageUri?.toString() ?: ""
 
-        // we called the database helper to insert the data and handled the success or failure result
-        val result = db.addExpense(
-            category,
-            amount.toDouble(),
-            dateLong,
-            description,
-            imagePath
-        )
+        // Notice the updated structure here using a callback block
+        db.addExpense(category, amount.toDouble(), dateLong, description, imagePath) { isSuccess ->
+            runOnUiThread {
+                if (isSuccess) {
+                    Toast.makeText(this, "Expense Saved to Firebase!", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this, "Firebase Database Error", Toast.LENGTH_SHORT).show()
+                }
+            }
 
-        if (result != -1L)
-        {
-            Toast.makeText(this, "Expense Saved!", Toast.LENGTH_SHORT).show()
-            finish()
-        }
-        else
-        {
-            Toast.makeText(this, "Database Error", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -18,15 +18,37 @@
         android:layout_marginTop="80dp" />
 
     <EditText
-        android:id="@+id/etRegUsername"
+        android:id="@+id/etFirstName"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="40dp"
         android:backgroundTint="#3F51B5"
-        android:hint="Enter Username"
+        android:hint="Enter First Name"
         android:textColor="#000000"
         android:textColorHint="#000000"
         app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle" />
+
+    <EditText
+        android:id="@+id/etLastName"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#3F51B5"
+        android:hint="Enter Last Name"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
+        app:layout_constraintTop_toBottomOf="@id/etFirstName" />
+
+    <EditText
+        android:id="@+id/etRegUsername"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#3F51B5"
+        android:hint="Enter Email / Username"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
+        app:layout_constraintTop_toBottomOf="@id/etLastName" />
 
     <EditText
         android:id="@+id/etRegPassword"

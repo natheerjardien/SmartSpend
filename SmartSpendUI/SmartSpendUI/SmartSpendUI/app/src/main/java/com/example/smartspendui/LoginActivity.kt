@@ -18,58 +18,46 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val btnRegister = findViewById<Button>(R.id.btnGoToRegister)
 
-        val db = DatabaseHelper(this)
+        val db = DatabaseHelper()
 
         val etPass = findViewById<EditText>(R.id.etPassword)
         val etUser = findViewById<EditText>(R.id.etUsername)
 
         btnLogin.setOnClickListener {
+            val inputUser = etUser.text.toString().trim()
+            val inputPass = etPass.text.toString().trim()
 
-            val users = db.getAllUsers() // we fetched all registered users from the database to verify credentials
+            if (inputUser.isEmpty() || inputPass.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-            val inputUser = etUser.text.toString()
-            val inputPass = etPass.text.toString()
+            // We fetch all registered users asynchronously from the cloud database
+            db.getAllUsers { usersList ->
+                var isValidUser = false
 
-
-            var isValidUser = false
-
-            // we iterated through the database cursor to check for a matching username and password pair
-            if (users.moveToFirst()) {
-                do {
-                    val username = users.getString(users.getColumnIndexOrThrow("username"))
-                    val password = users.getString(users.getColumnIndexOrThrow("password"))
-
-                    if (username == inputUser && password == inputPass) {
-
+                // we iterated through the collection to check for a matching username and password pair
+                for (user in usersList) {
+                    if (user.username == inputUser && user.password == inputPass) {
                         // we marked the login as successful if a match was found
                         isValidUser = true
                         break
-
                     }
-                } while (users.moveToNext())
+                }
+
+                if (isValidUser) {
+                    Log.d("SmartSpend", "Login success")
+
+                    // we navigated the user to the splash screen upon successful authentication
+                    startActivity(Intent(this, SplashActivity::class.java))
+                    finish()
+                } else {
+                    Log.d("SmartSpend", "Invalid login attempted")
+
+                    // we displayed an error message if the credentials did not match any records
+                    Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show()
+                }
             }
-
-            users.close() // we closed the cursor to free up memory resources
-
-            if (isValidUser)
-            {
-
-                Log.d("SmartSpend", "Login success")
-
-                // we navigated the user to the splash screen upon successful authentication
-                startActivity(Intent(this, SplashActivity::class.java))
-                finish()
-
-            }
-            else
-            {
-                Log.d("SmartSpend", "Invalid login attempted")
-
-                // we displayed an error message if the credentials did not match any records
-                Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show()
-            }
-
-
         }
 
         btnRegister.setOnClickListener { // we provided a navigation path to the registration screen for new users

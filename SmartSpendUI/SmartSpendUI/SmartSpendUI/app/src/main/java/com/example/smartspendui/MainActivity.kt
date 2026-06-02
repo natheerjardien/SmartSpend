@@ -45,34 +45,41 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateBalance() { // we calculated and displayed the remaining budget based on total spending
-        val db = DatabaseHelper(this)
+        val db = DatabaseHelper()
         val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
-
         val totalBudget = prefs.getFloat("BUDGET_MAX", 0f)
-        val totalSpent = db.getTotalSpent("") // The method we added to DatabaseHelper
-
-        val availableBalance = totalBudget - totalSpent
 
         val tvBalance = findViewById<TextView>(R.id.tvBalanceAmount)
-        tvBalance.text = "R ${String.format("%.2f", availableBalance)}"
+
+        db.getTotalSpent("") {  totalSpent ->
+
+            val availableBalance = totalBudget - totalSpent
+
+            tvBalance.text = "R ${String.format("%.2f", availableBalance)}"
+
+        }
+
     }
 
     private fun setupProgressBar() { // we updated the budget health progress bar to reflect the current spending percentage
-        val db = DatabaseHelper(this)
+        val db = DatabaseHelper()
         val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
         val maxGoal = prefs.getFloat("BUDGET_MAX", 0f)
-        val totalSpent = db.getTotalSpent("")
+
 
         val pbHome = findViewById<ProgressBar>(R.id.pbBudgetHealth)
 
-        if (maxGoal > 0)
-        {
-            pbHome.progress = ((totalSpent / maxGoal) * 100).toInt()
+        db.getTotalSpent("") { totalSpent ->
+            if (maxGoal > 0)
+            {
+                pbHome.progress = ((totalSpent / maxGoal) * 100).toInt()
+            }
+            else
+            {
+                pbHome.progress = 0
+            }
         }
-        else
-        {
-            pbHome.progress = 0
-        }
+
     }
 
     private fun setupNavigation() { // we configured click listeners to navigate to the various modules of the app
