@@ -20,6 +20,7 @@ class FilterSearchActivity : AppCompatActivity() {
         val etEnd = findViewById<EditText>(R.id.etEndDate)
         val spnCategory = findViewById<Spinner>(R.id.spnFilterCategory)
         val btnSearch = findViewById<Button>(R.id.btnSearch)
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
 
         // we attached date picker dialogs to the start and end date input fields
         etStart.setOnClickListener { showDatePicker(etStart) }
@@ -59,7 +60,7 @@ class FilterSearchActivity : AppCompatActivity() {
                 val intent = Intent(this, TransactionHistoryActivity::class.java)
                 intent.putExtra("FILTER_START", startL) // This is now exactly 00:00:00 of the start day
                 intent.putExtra("FILTER_END", endL)     // This is now exactly 00:00:00 of the end day
-                intent.putExtra("FILTER_CAT", spnCategory.selectedItem.toString())
+                intent.putExtra("FILTER_CAT", category)
                 startActivity(intent)
                 finish()
             }
@@ -67,6 +68,12 @@ class FilterSearchActivity : AppCompatActivity() {
             {
                 Toast.makeText(this, "Select a date range", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        btnBack.setOnClickListener {
+            // we closed the activity to return the user to the transaction history list
+            Log.d("SmartSpend", "Navigating back to Transaction History")
+            finish()
         }
     }
 

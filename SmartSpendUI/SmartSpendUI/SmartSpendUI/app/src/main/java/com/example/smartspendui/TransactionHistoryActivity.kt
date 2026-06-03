@@ -63,12 +63,12 @@ class TransactionHistoryActivity : AppCompatActivity() {
         }
     }
 
-    // Helper method to attach the fetched cloud list to your the adapter logic
+    // Helper method to attach the fetched cloud list to the adapter logic
     private fun updateAdapter(expenseList: List<ExpenseEntity>) {
         // we updated the recyclerview adapter and defined the click behavior for viewing specific transaction details
         rvTransactions.adapter = TransactionAdapter(expenseList) { expenseId ->
             val intent = Intent(this, TransactionDetailActivity::class.java)
-            intent.putExtra("EXPENSE_ID", expenseId) // expenseId is now passed cleanly as a String
+            intent.putExtra("EXPENSE_ID", expenseId)
             startActivity(intent)
         }
     }
@@ -88,6 +88,9 @@ class TransactionHistoryActivity : AppCompatActivity() {
             val intent = Intent(this, BudgetActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
+        }
+        findViewById<Button>(R.id.btnNavAnalytic).setOnClickListener {
+            finish()
         }
     }
 }

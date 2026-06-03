@@ -1,7 +1,5 @@
 package com.example.smartspendui
 
-import android.R
-
 // Kotlin (2026) demonstrates how to create data classes
 
 data class UserEntity(
@@ -9,7 +7,10 @@ data class UserEntity(
     val username: String = "",
     val password: String = "",
     val firstName: String = "",
-    val lastName: String = ""
+    val lastName: String = "",
+    val profileImageUrl: String? = "",
+    val totalIncome: Double = 0.0,
+    val monthlySalary: Double = 0.0
 )
 
 // Kotlin, 2026. Data Classes. (Version 2.0) [Source code]

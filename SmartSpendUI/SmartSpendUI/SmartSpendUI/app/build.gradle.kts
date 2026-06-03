@@ -45,6 +45,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
     implementation("com.github.bumptech.glide:glide:5.0.5")
     implementation(libs.firebase.database)
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")

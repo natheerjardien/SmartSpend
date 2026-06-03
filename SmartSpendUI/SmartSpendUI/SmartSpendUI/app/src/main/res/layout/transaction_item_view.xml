@@ -53,7 +53,10 @@
                 android:layout_height="260dp"
                 android:alpha="0.8"
                 android:scaleType="centerCrop"
-                android:src="@drawable/a1___smartspend_logo" />
+                android:src="@drawable/a1___smartspend_logo"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -61,7 +64,7 @@
                 android:layout_gravity="bottom|center_horizontal"
                 android:background="#AA0F0F1E"
                 android:padding="8dp"
-                android:text="VERIFIED RECEIPT SCAN"
+                android:text="CLICK TO DOWNLOAD IMAGE"
                 android:textColor="#2196F3"
                 android:textSize="10sp" />
 

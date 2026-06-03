@@ -4,82 +4,140 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1A000000"
-    android:padding="@dimen/screen_margin" >
+    android:padding="@dimen/screen_margin">
 
-    <LinearLayout
+    <!-- SCROLLABLE CONTENT -->
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavBar">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="FINANCIAL ANALYTICS"
-            android:layout_marginTop="32dp"
-            android:textColor="#2196F3"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="32dp"/>
-
-        <View
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1A1A2E"
-            android:layout_marginBottom="16dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Budget Progress"
-            android:textColor="#3F51B5"
-            android:textSize="14sp" />
+            android:orientation="vertical">
 
-        <ProgressBar
-            android:id="@+id/pbMonthlyGoal"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:progress="0"
-            android:progressTint="#00FFFF"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"/>
+            <!-- TITLE -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FINANCIAL ANALYTICS"
+                android:layout_marginTop="32dp"
+                android:textColor="#2196F3"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="32dp"/>
 
-        <TextView
-            android:id="@+id/tvGoalStatusText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0% of Max Goal Reached"
-            android:textColor="#000000"
-            android:textSize="12sp"
-            android:layout_marginBottom="32dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#1A1A2E"
+                android:layout_marginBottom="16dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Spending by Category"
-            android:textColor="#3F51B5"
-            android:textSize="14sp"
-            android:layout_marginBottom="16dp"/>
+            <!-- PROGRESS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Monthly Budget Progress"
+                android:textColor="#3F51B5"
+                android:textSize="14sp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvCategoryList"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="16dp"/>
+            <ProgressBar
+                android:id="@+id/pbMonthlyGoal"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:progress="0"
+                android:progressTint="#00FFFF"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
 
-        <Button
-            android:id="@+id/btnViewLog"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:backgroundTint="#2196F3"
-            android:text="VIEW FULL TRANSACTION LOG"
-            android:textColor="#0F0F1E"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvGoalStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0% of Max Goal Reached"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                android:layout_marginBottom="24dp"/>
 
-    </LinearLayout>
+            <!-- CHART -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spending by Category"
+                android:textColor="#3F51B5"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp"/>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Period"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_marginBottom="8dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actvPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Month"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_marginBottom="12dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actvMonth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChart"
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- CATEGORY LIST -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category Breakdown"
+                android:textColor="#3F51B5"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCategoryList"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- BUTTON -->
+            <Button
+                android:id="@+id/btnViewLog"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:backgroundTint="#2196F3"
+                android:text="VIEW FULL TRANSACTION LOG"
+                android:textColor="#0F0F1E"
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- BOTTOM NAV -->
     <LinearLayout
         android:id="@+id/bottomNavBar"
         android:layout_width="0dp"
@@ -96,13 +154,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Home"
-            android:textAllCaps="false"
-            android:singleLine="true"
-            android:includeFontPadding="false"
+            android:textColor="#000000"
             android:textSize="11sp"
-            android:gravity="center"
-            android:backgroundTint="@android:color/transparent"
-            android:textColor="#000000" />
+            android:backgroundTint="@android:color/transparent"/>
 
         <Button
             android:id="@+id/btnNavEntry"
@@ -110,13 +164,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Expense"
-            android:textAllCaps="false"
-            android:singleLine="true"
-            android:includeFontPadding="false"
+            android:textColor="#000000"
             android:textSize="11sp"
-            android:gravity="center"
-            android:backgroundTint="@android:color/transparent"
-            android:textColor="#000000" />
+            android:backgroundTint="@android:color/transparent"/>
 
         <Button
             android:id="@+id/btnNavBudget"
@@ -124,13 +174,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Budget"
-            android:textAllCaps="false"
-            android:singleLine="true"
-            android:includeFontPadding="false"
+            android:textColor="#000000"
             android:textSize="11sp"
-            android:gravity="center"
-            android:backgroundTint="@android:color/transparent"
-            android:textColor="#000000" />
+            android:backgroundTint="@android:color/transparent"/>
 
         <Button
             android:id="@+id/btnNavAnalytic"
@@ -138,12 +184,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Stats"
-            android:textAllCaps="false"
-            android:singleLine="true"
-            android:includeFontPadding="false"
+            android:textColor="#2196F3"
             android:textSize="11sp"
-            android:backgroundTint="@android:color/transparent"
-            android:textColor="#2196F3" />
+            android:backgroundTint="@android:color/transparent"/>
 
     </LinearLayout>
 

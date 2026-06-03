@@ -7,16 +7,30 @@
     android:background="#1A000000"
     android:padding="@dimen/screen_margin" >
 
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Navigate back to transaction history"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#2196F3" />
+
     <TextView
         android:id="@+id/tvFilterTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="16dp"
         android:text="FILTER TRANSACTIONS"
         android:textColor="#2196F3"
         android:textSize="22sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/lblStartDate"
@@ -33,7 +47,6 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:hint="Select Start Date"
-        android:textColorHint="#000000"
         android:textColor="#000000"
         android:backgroundTint="#3F51B5"
         android:focusable="false"
@@ -56,7 +69,6 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:hint="Select End Date"
-        android:textColorHint="#000000"
         android:textColor="#000000"
         android:backgroundTint="#3F51B5"
         android:focusable="false"

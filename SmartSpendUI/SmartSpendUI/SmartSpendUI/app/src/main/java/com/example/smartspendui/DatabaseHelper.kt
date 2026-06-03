@@ -1,5 +1,6 @@
 package com.example.smartspendui
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -7,18 +8,22 @@ import com.google.firebase.database.ValueEventListener
 
 class DatabaseHelper {
 
-    // Get reference to the root of your Firebase Database
+    // Get reference to the root of our Firebase Database
     private val database = FirebaseDatabase.getInstance("https://bcad3-st10433896-default-rtdb.asia-southeast1.firebasedatabase.app").reference
 
-    // 1. Add User
+    // Add User
     fun addUser(username: String, password: String, firstName: String, lastName: String, onResult: (Boolean) -> Unit) {
         val userId = database.child("users").push().key ?: return onResult(false)
+
         val user = UserEntity(
             uid = userId,
             username = username,
             password = password,
             firstName = firstName,
-            lastName = lastName
+            lastName = lastName,
+            profileImageUrl = "",
+            totalIncome = 0.0,
+            monthlySalary = 0.0
         )
 
         database.child("users").child(userId).setValue(user)
@@ -28,7 +33,7 @@ class DatabaseHelper {
 
 
 
-    // 2. Add Expense
+    // Add Expense
     fun addExpense(
         category: String,
         amount: Double,
@@ -45,7 +50,7 @@ class DatabaseHelper {
             .addOnFailureListener { onResult(false) }
     }
 
-    // 3. Get Expense By ID
+    // Get Expense By ID
     fun getExpenseById(id: String, onResult: (ExpenseEntity?) -> Unit) {
         database.child("expenses").child(id).get().addOnSuccessListener { snapshot ->
             val expense = snapshot.getValue(ExpenseEntity::class.java)
@@ -55,13 +60,13 @@ class DatabaseHelper {
         }
     }
 
-    // 4. Fetch All Expenses (Ordered by Date)
+    // Fetch All Expenses (Ordered by Date)
     fun getAllExpenses(onResult: (List<ExpenseEntity>) -> Unit) {
         database.child("expenses").orderByChild("date")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val expenses = mutableListOf<ExpenseEntity>()
-                    // Firebase orders ascending by default, we reverse to mirror your original DESC order
+                    // Firebase orders ascending by default, we reverse to mirror the original DESC order
                     for (child in snapshot.children) {
                         child.getValue(ExpenseEntity::class.java)?.let { expenses.add(it) }
                     }
@@ -71,7 +76,7 @@ class DatabaseHelper {
             })
     }
 
-    // 5. Get Expenses by Date Range
+    // Get Expenses by Date Range
     fun getExpensesByDateRange(startDate: Long, endDate: Long, onResult: (List<ExpenseEntity>) -> Unit) {
         database.child("expenses").orderByChild("date")
             .startAt(startDate.toDouble())
@@ -88,9 +93,7 @@ class DatabaseHelper {
             })
     }
 
-    // 6. Get Expenses by Date and Category
-    // Note: Firebase Realtime DB doesn't cleanly support multi-property queries natively without composite keys.
-    // The easiest approach is filtering the category client-side from the date range results.
+    // Get Expenses by Date and Category
     fun getExpensesByDateAndCategory(
         startDate: Long,
         endDate: Long,
@@ -103,7 +106,7 @@ class DatabaseHelper {
         }
     }
 
-    // 7. Get Total Spent (Grand total or Category total)
+    // Get Total Spent (Grand total or Category total)
     fun getTotalSpent(category: String = "", onResult: (Double) -> Unit) {
         database.child("expenses").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -122,7 +125,7 @@ class DatabaseHelper {
         })
     }
 
-    // 8. Get Unique Categories
+    // Get Unique Categories
     fun getUniqueCategories(onResult: (List<String>) -> Unit) {
         database.child("expenses").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -136,7 +139,7 @@ class DatabaseHelper {
         })
     }
 
-    // 9. Get All Users
+    // Get All Users
     fun getAllUsers(onResult: (List<UserEntity>) -> Unit) {
         // Explicitly target the correct node path
         database.child("users").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -175,5 +178,119 @@ class DatabaseHelper {
                 onResult(emptyList())
             }
         })
+    }
+
+    fun addCategoryBudget(userId: String, category: String, minGoal: Double, maxGoal: Double, onResult: (Boolean) -> Unit) {
+        val budgetPlan = mapOf(
+            "categoryName" to category,
+            "minGoal" to minGoal,
+            "maxGoal" to maxGoal
+        )
+
+        database.child("CategoryBudget").child(userId).child(category).setValue(budgetPlan)
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { exception ->
+                Log.e("SmartSpendDB", "Firebase Budget Save Failed: ${exception.message}")
+                onResult(false)
+            }
+    }
+
+    fun getCategoryBudget(userId: String, category: String, onResult: (minGoal: String, maxGoal: String) -> Unit) {
+        database.child("CategoryBudget").child(userId).child(category).get()
+            .addOnSuccessListener { snapshot ->
+                if (snapshot.exists()) {
+                    val min = snapshot.child("minGoal").value?.toString() ?: ""
+                    val max = snapshot.child("maxGoal").value?.toString() ?: ""
+                    onResult(min, max)
+                } else {
+                    onResult("", "")
+                }
+            }
+            .addOnFailureListener {
+                onResult("", "")
+            }
+    }
+
+    fun getCustomBudgetCategories(userId: String, onResult: (List<String>) -> Unit) {
+        val combinedCategories = mutableSetOf<String>()
+
+        database.child("CategoryBudget").child(userId).get().addOnSuccessListener { budgetSnapshot ->
+            if (budgetSnapshot.exists()) {
+                for (child in budgetSnapshot.children) {
+                    child.key?.let { combinedCategories.add(it) }
+                }
+            }
+
+            database.child("expenses").addListenerForSingleValueEvent(object : com.google.firebase.database.ValueEventListener {
+                override fun onDataChange(expenseSnapshot: com.google.firebase.database.DataSnapshot) {
+                    for (child in expenseSnapshot.children) {
+                        val expenseCat = child.child("category").value?.toString() ?: ""
+                        if (expenseCat.isNotEmpty()) {
+                            combinedCategories.add(expenseCat)
+                        }
+                    }
+                    onResult(combinedCategories.toList())
+                }
+
+                override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
+                    onResult(combinedCategories.toList())
+                }
+            })
+        }.addOnFailureListener {
+            onResult(emptyList())
+        }
+    }
+
+    fun updateUserIncome(userId: String, amount: Double, isSideHustle: Boolean, onResult: (Boolean) -> Unit) {
+        val userRef = database.child("users").child(userId)
+
+        userRef.get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                val currentTotal = snapshot.child("totalIncome").value?.toString()?.toDoubleOrNull() ?: 0.0
+                val updates = mutableMapOf<String, Any>()
+
+                if (isSideHustle) {
+                    // Side Hustle adds on top of the liquid cash pool
+                    updates["totalIncome"] = currentTotal + amount
+                } else {
+                    // Monthly Income completely overrides both pools to set a fresh baseline
+                    updates["totalIncome"] = amount
+                    updates["monthlySalary"] = amount
+                }
+
+                userRef.updateChildren(updates)
+                    .addOnSuccessListener { onResult(true) }
+                    .addOnFailureListener { onResult(false) }
+            } else {
+                onResult(false)
+            }
+        }.addOnFailureListener { onResult(false) }
+    }
+
+    fun updateProfileImage(userId: String, imageUrlString: String, onResult: (Boolean) -> Unit) {
+        database.child("users").child(userId).child("profileImageUrl").setValue(imageUrlString)
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    fun getUserProfile(userId: String, onResult: (DataSnapshot) -> Unit) {
+        database.child("users").child(userId).get()
+            .addOnSuccessListener { snapshot ->
+                onResult(snapshot)
+            }
+            .addOnFailureListener {
+                database.database.getReference("empty_fallback").get().addOnCompleteListener { task ->
+                    onResult(task.result)
+                }
+            }
+    }
+
+    fun updateUserProfileFields(userId: String, updatesMap: Map<String, Any>, onResult: (Boolean) -> Unit) {
+        database.child("users").child(userId).updateChildren(updatesMap)
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { exception ->
+                Log.e("SmartSpendDB", "Failed to update profile nodes: ${exception.message}")
+                onResult(false)
+            }
     }
 }

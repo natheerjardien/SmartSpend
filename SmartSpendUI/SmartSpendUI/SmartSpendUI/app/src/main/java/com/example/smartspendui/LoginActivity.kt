@@ -35,27 +35,39 @@ class LoginActivity : AppCompatActivity() {
             // We fetch all registered users asynchronously from the cloud database
             db.getAllUsers { usersList ->
                 var isValidUser = false
+                var matchedUser: UserEntity? = null
+                val hashedInputPassword = RegisterActivity.SecurityUtils.hashPassword(inputPass)
 
                 // we iterated through the collection to check for a matching username and password pair
                 for (user in usersList) {
-                    if (user.username == inputUser && user.password == inputPass) {
+                    if (user.username == inputUser && user.password == hashedInputPassword) {
                         // we marked the login as successful if a match was found
                         isValidUser = true
+                        matchedUser = user
                         break
                     }
                 }
 
-                if (isValidUser) {
-                    Log.d("SmartSpend", "Login success")
+                runOnUiThread {
+                    if (isValidUser && matchedUser != null) {
+                        Log.d("SmartSpend", "Login success")
 
-                    // we navigated the user to the splash screen upon successful authentication
-                    startActivity(Intent(this, SplashActivity::class.java))
-                    finish()
-                } else {
-                    Log.d("SmartSpend", "Invalid login attempted")
+                        val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
+                        prefs.edit().apply {
+                            putString("CURRENT_USER_ID", matchedUser.uid) // Store the actual Firebase Push ID string
+                            putString("USER_NAME", matchedUser.username)
+                            apply() // Write immediately to storage
+                        }
 
-                    // we displayed an error message if the credentials did not match any records
-                    Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show()
+                        // we navigated the user to the splash screen upon successful authentication
+                        startActivity(Intent(this, SplashActivity::class.java))
+                        finish()
+                    } else {
+                        Log.d("SmartSpend", "Invalid login attempted")
+
+                        // we displayed an error message if the credentials did not match any records
+                        Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

@@ -5,16 +5,13 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.Firebase
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.database
 import java.util.Calendar
 
 class ExpenseEntryActivity : AppCompatActivity() { // we created this class to handle the input and storage of new expenses
@@ -22,25 +19,46 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
     private var selectedImageUri: Uri? = null
     private lateinit var ivPreview: ImageView
 
-    private lateinit var rootNode: FirebaseDatabase
+    private val dbHelper = DatabaseHelper()
+    private var currentUserId: String = ""
 
-    private lateinit var expenseReference: DatabaseReference
-
-    private var id = 0
+    // Baseline factory-defined category entries array list
+    private val baseCategories = mutableListOf("Groceries", "Transport", "Rent", "Entertainment", "Utilities")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.expense_entry_page) // we linked the activity to the expense entry layout
 
         ivPreview = findViewById(R.id.ivPhotoPreview)
-        val etCategory = findViewById<EditText>(R.id.etCategory)
+        val actvCategory = findViewById<AutoCompleteTextView>(R.id.actvExpenseCategory)
         val etAmount = findViewById<EditText>(R.id.etAmount)
         val etDate = findViewById<EditText>(R.id.etDate)
         val etDescription = findViewById<EditText>(R.id.etDescription)
 
         val btnPhoto = findViewById<Button>(R.id.btnTakePhoto)
         val btnSave = findViewById<Button>(R.id.btnSaveTransaction)
-        val btnCancel = findViewById<Button>(R.id.btnCancelTransaction)
+
+        val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
+        currentUserId = prefs.getString("CURRENT_USER_ID", "") ?: ""
+
+        if (currentUserId.isNotEmpty()) {
+            dbHelper.getCustomBudgetCategories(currentUserId) { customCategories ->
+                for (cat in customCategories) {
+                    if (cat.isNotEmpty() && !baseCategories.contains(cat)) {
+                        baseCategories.add(cat)
+                    }
+                }
+                runOnUiThread {
+                    val finalAdapter = ArrayAdapter(this@ExpenseEntryActivity, android.R.layout.simple_spinner_dropdown_item, baseCategories)
+                    actvCategory.setAdapter(finalAdapter)
+                }
+            }
+        } else {
+            val fallbackAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, baseCategories)
+            actvCategory.setAdapter(fallbackAdapter)
+        }
+
+        actvCategory.setOnClickListener { actvCategory.showDropDown() }
 
         // we attached a date picker listener to the date input field
         etDate.setOnClickListener { showDatePicker(etDate) }
@@ -76,7 +94,7 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
 
         // we validated the inputs before attempting to save the expense to the database
         btnSave.setOnClickListener {
-            val category = etCategory.text.toString()
+            val category = actvCategory.text.toString().trim()
             val amount = etAmount.text.toString()
             val date = etDate.text.toString()
             val description = etDescription.text.toString()
@@ -88,10 +106,7 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
                 saveToDatabase(category, amount, date, description)
             }
         }
-
-        btnCancel.setOnClickListener {
-            finish() // we closed the activity if the user chose to cancel
-        }
+        setupNavigation()
     }
 
     private fun showDatePicker(editText: EditText) { // we displayed a calendar dialog to ensure the user selected a valid date format
@@ -129,7 +144,6 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
 
         val imagePath = selectedImageUri?.toString() ?: ""
 
-        // Notice the updated structure here using a callback block
         db.addExpense(category, amount.toDouble(), dateLong, description, imagePath) { isSuccess ->
             runOnUiThread {
                 if (isSuccess) {
@@ -140,6 +154,24 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
                 }
             }
 
+        }
+    }
+
+    private fun setupNavigation() { // we set up intent listeners to navigate to other parts of the application
+        findViewById<Button>(R.id.btnNavHome).setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+        }
+        findViewById<Button>(R.id.btnNavBudget).setOnClickListener {
+            val intent = Intent(this, BudgetActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+        }
+        findViewById<Button>(R.id.btnNavAnalytic).setOnClickListener {
+            val intent = Intent(this, AnalyticsActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
     }
 }
