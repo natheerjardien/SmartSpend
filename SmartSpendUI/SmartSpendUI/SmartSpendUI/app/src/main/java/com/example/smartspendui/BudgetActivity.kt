@@ -47,6 +47,7 @@ class BudgetActivity : AppCompatActivity() { // we created this class to manage 
             return
         }
 
+        // we retrieved custom categories from the database and combined them with our fallback baseline array list
         dbHelper.getCustomBudgetCategories(currentUserId) { unifiedList ->
             for (cat in unifiedList) {
                 if (cat.isNotEmpty() && !baseCategories.contains(cat)) {
@@ -61,6 +62,7 @@ class BudgetActivity : AppCompatActivity() { // we created this class to manage 
 
         actvCategory.setOnClickListener { actvCategory.showDropDown() }
 
+        // we listened for field focus drops to search and prefill existing matching budget limits from the server
         actvCategory.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 val selectedCat = actvCategory.text.toString().trim()
@@ -75,6 +77,7 @@ class BudgetActivity : AppCompatActivity() { // we created this class to manage 
             }
         }
 
+        // we attached click actions to process and sync localized user income adjustments with cloud tables
         btnSaveIncome.setOnClickListener {
             val incomeInputText = etIncomeAmount.text.toString().trim()
 
@@ -98,6 +101,7 @@ class BudgetActivity : AppCompatActivity() { // we created this class to manage 
             }
         }
 
+        // we registered event submission clicks to validate inputs and transmit target limits straight to the database branch
         findViewById<Button>(R.id.btnSaveBudget).setOnClickListener {
             val category = actvCategory.text.toString().trim()
             val minText = etMin.text.toString().trim()
@@ -117,6 +121,7 @@ class BudgetActivity : AppCompatActivity() { // we created this class to manage 
                         etMin.text.clear()
                         etMax.text.clear()
 
+                        // we saved the threshold variables into local shared preferences for fast offline rendering loops
                         prefs.edit().putFloat("BUDGET_MIN", minText.toFloat()).putFloat("BUDGET_MAX", maxText.toFloat()).apply()
                     } else {
                         Toast.makeText(applicationContext, "Database Connection Error.", Toast.LENGTH_SHORT).show()
@@ -129,6 +134,7 @@ class BudgetActivity : AppCompatActivity() { // we created this class to manage 
     }
 
     private fun setupNavigation() { // we set up intent listeners to navigate to other parts of the application
+        // we mapped click destinations to transfer context across active dashboard views seamlessly
         findViewById<Button>(R.id.btnNavHome).setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP

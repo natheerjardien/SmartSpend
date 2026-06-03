@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0% of Max Goal Reached"
-                android:textColor="#000000"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="12sp"
                 android:layout_marginBottom="24dp"/>
 
@@ -154,7 +154,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Home"
-            android:textColor="#000000"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="11sp"
             android:backgroundTint="@android:color/transparent"/>
 
@@ -164,7 +164,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Expense"
-            android:textColor="#000000"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="11sp"
             android:backgroundTint="@android:color/transparent"/>
 
@@ -174,7 +174,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Budget"
-            android:textColor="#000000"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="11sp"
             android:backgroundTint="@android:color/transparent"/>
 

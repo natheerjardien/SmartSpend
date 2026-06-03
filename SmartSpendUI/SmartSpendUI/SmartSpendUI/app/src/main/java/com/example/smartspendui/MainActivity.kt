@@ -1,6 +1,8 @@
 package com.example.smartspendui
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -18,6 +20,8 @@ class MainActivity : AppCompatActivity() {
 
     private val dbHelper = DatabaseHelper()
     private var currentUserId: String = ""
+
+    private var lastQuote = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,12 +47,11 @@ class MainActivity : AppCompatActivity() {
         currentUserId = prefs.getString("CURRENT_USER_ID", "") ?: ""
 
         updateBalance()
-        setupProgressBar()
         fetchAndSetUserProfile()
+        showRandomQuote()
     }
 
     private fun resetUiForLogic() { // we cleared the ui components to prepare them for dynamic data loading
-        findViewById<ProgressBar>(R.id.pbBadgeProgress).progress = 0
         findViewById<ProgressBar>(R.id.pbBudgetHealth).progress = 0
         findViewById<TextView>(R.id.tvBalanceAmount).text = "R 0.00"
         Log.d("SmartSpend", "UI components reset for dynamic logic initialization")
@@ -63,19 +66,29 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        // we queried the target profile node from firebase to read income configurations
         dbHelper.getUserProfile(currentUserId) { snapshot ->
             if (snapshot.exists()) {
                 val totalIncome = snapshot.child("totalIncome").value?.toString()?.toDoubleOrNull() ?: 0.0
 
-                dbHelper.getTotalSpent("") { totalSpent ->
+                // we pulled user specific transaction totals to evaluate the remaining wallet margins
+                dbHelper.getTotalSpent(currentUserId) { totalSpent ->
 
                     val availableBalance = totalIncome - totalSpent
 
-                    runOnUiThread {
+                    runOnUiThread { // we updated the core dashboard figures and recalculated progress percentages on the main thread
                         tvBalance.text = "R ${String.format("%.2f", availableBalance)}"
 
                         if (totalIncome > 0) {
                             pbHome.progress = ((totalSpent / totalIncome) * 100).toInt()
+                            pbHome.progressTintList =
+                                ColorStateList.valueOf(Color.parseColor("#00FFFF"))
+
+                            if  (pbHome.progress >= 100)
+                            {
+                                pbHome.progressTintList =
+                                    ColorStateList.valueOf(Color.parseColor("#F44336"))
+                            }
                         } else {
                             pbHome.progress = 0
                         }
@@ -85,26 +98,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupProgressBar() { // we updated the budget health progress bar to reflect the current spending percentage
-        val db = DatabaseHelper()
-        val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
-        val maxGoal = prefs.getFloat("BUDGET_MAX", 0f)
-
-
-        val pbHome = findViewById<ProgressBar>(R.id.pbBudgetHealth)
-
-        db.getTotalSpent("") { totalSpent ->
-            if (maxGoal > 0)
-            {
-                pbHome.progress = ((totalSpent / maxGoal) * 100).toInt()
-            }
-            else
-            {
-                pbHome.progress = 0
-            }
-        }
-
-    }
 
     private fun setupNavigation() { // we configured click listeners to navigate to the various modules of the app
         val btnEntry = findViewById<Button>(R.id.btnNavEntry)
@@ -112,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         val btnAnalytic = findViewById<Button>(R.id.btnNavAnalytic)
         val ivProfileImage = findViewById<ImageView>(R.id.ivHeaderProfilePic)
 
-        ivProfileImage.setOnClickListener {
+        ivProfileImage.setOnClickListener { // we attached an avatar click interceptor to route the user straight to the profile configuration module
             Log.d("SmartSpend", "Navigating to ProfileActivity via avatar tap event listener thread")
             val intent = Intent(this, ProfileActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -141,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchAndSetUserProfile() {
+    private fun fetchAndSetUserProfile() { // we pulled personalized identity parameters to update greeting headers
         val tvGreeting = findViewById<TextView>(R.id.tvHeaderGreeting)
         val ivProfileImage = findViewById<ImageView>(R.id.ivHeaderProfilePic)
 
@@ -152,10 +145,10 @@ class MainActivity : AppCompatActivity() {
                     val profileImageUrl = snapshot.child("profileImageUrl").value?.toString() ?: ""
 
                     runOnUiThread {
-                        // Personalize greeting text dynamically using the user's first name
+                        // we personalized the greeting text dynamically using the user's first name
                         tvGreeting.text = "Hello, $firstName!"
 
-                        // Stream profile picture securely via Glide avoiding lifecycle permission faults
+                        // we streamed the profile picture securely via glide to avoid lifecycle permission faults
                         if (profileImageUrl.isNotEmpty() && ivProfileImage != null) {
                             Glide.with(this@MainActivity)
                                 .load(profileImageUrl)
@@ -169,4 +162,41 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private val spendingQuotes = listOf(
+        "Small savings today lead to financial freedom tomorrow.",
+        "Spend wisely, live freely.",
+        "Your future self will thank you for this decision.",
+        "A budget is telling your money where to go.",
+        "Every rand saved is a step closer to your goals.",
+        "Control your money, or it will control you.",
+        "Wealth is built one smart decision at a time."
+    )
+
+    private fun showRandomQuote() {
+
+        val tvQuote = findViewById<TextView>(R.id.tvMotivationQuote)
+
+        var quote = spendingQuotes.random()
+
+        while (quote == lastQuote) {
+            quote = spendingQuotes.random()
+        }
+
+        lastQuote = quote
+
+        tvQuote.text = " $quote"
+
+        tvQuote.translationY = 50f
+        tvQuote.alpha = 0f
+
+        // StackOverflow (2022) demonstrates how to add text animation
+        tvQuote.animate()
+            .translationY(0f)
+            .alpha(1f)
+            .setDuration(800)
+            .start()
+    }
 }
+// StackOverflow, 2022. Show and hide a View with a slide up/down animation. (Version 2.0) [Source code]
+// Available at: < https://stackoverflow.com/questions/19765938/show-and-hide-a-view-with-a-slide-up-down-animation > [Accessed 28 May 2026].

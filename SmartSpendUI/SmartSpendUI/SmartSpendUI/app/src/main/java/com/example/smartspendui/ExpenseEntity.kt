@@ -8,7 +8,7 @@ data class ExpenseEntity(
     val amount: Double = 0.0,
     val date: Long = 0,
     val description: String = "",
-    val imagePath: String? = ""
+    val imagePath: String? = "" // we retained the permanent local storage file path string for attached receipt images
 )
 
 // Kotlin, 2026. Data Classes. (Version 2.0) [Source code]

@@ -43,7 +43,7 @@
                     android:layout_height="55dp"
                     android:hint="Select or Type Custom Category"
                     android:inputType="textLongMessage"
-                    android:textColor="#000000"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:padding="12dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -59,7 +59,7 @@
                 android:layout_height="55dp"
                 android:hint="Amount (ZAR)"
                 android:inputType="numberDecimal"
-                android:textColor="#000000"
+                android:textColor="?android:attr/textColorPrimary"
                 android:backgroundTint="#3F51B5"
                 android:layout_marginBottom="20dp"/>
 
@@ -78,7 +78,7 @@
                 android:hint="Date (YYYY-MM-DD)"
                 android:focusable="false"
                 android:inputType="date"
-                android:textColor="#000000" />
+                android:textColor="?android:attr/textColorPrimary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:hint="Description"
-                android:textColor="#000000"
+                android:textColor="?android:attr/textColorPrimary"
                 android:backgroundTint="#3F51B5"
                 android:layout_marginBottom="16dp"/>
 
@@ -148,7 +148,7 @@
             android:textSize="11sp"
             android:gravity="center"
             android:backgroundTint="@android:color/transparent"
-            android:textColor="#000000" />
+            android:textColor="?android:attr/textColorPrimary" />
 
         <Button
             android:id="@+id/btnNavEntry"
@@ -176,7 +176,7 @@
             android:textSize="11sp"
             android:gravity="center"
             android:backgroundTint="@android:color/transparent"
-            android:textColor="#000000" />
+            android:textColor="?android:attr/textColorPrimary" />
 
         <Button
             android:id="@+id/btnNavAnalytic"
@@ -189,7 +189,7 @@
             android:includeFontPadding="false"
             android:textSize="11sp"
             android:backgroundTint="@android:color/transparent"
-            android:textColor="#000000" />
+            android:textColor="?android:attr/textColorPrimary" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

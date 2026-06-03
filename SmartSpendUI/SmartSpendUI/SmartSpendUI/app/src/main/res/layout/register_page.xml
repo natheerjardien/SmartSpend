@@ -24,8 +24,7 @@
         android:layout_marginTop="40dp"
         android:backgroundTint="#3F51B5"
         android:hint="Enter First Name"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle" />
 
     <EditText
@@ -35,8 +34,7 @@
         android:layout_marginTop="20dp"
         android:backgroundTint="#3F51B5"
         android:hint="Enter Last Name"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintTop_toBottomOf="@id/etFirstName" />
 
     <EditText
@@ -46,8 +44,7 @@
         android:layout_marginTop="20dp"
         android:backgroundTint="#3F51B5"
         android:hint="Enter Email / Username"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintTop_toBottomOf="@id/etLastName" />
 
     <EditText
@@ -58,8 +55,7 @@
         android:backgroundTint="#3F51B5"
         android:hint="Create Password"
         android:inputType="textPassword"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintTop_toBottomOf="@id/etRegUsername" />
 
     <EditText
@@ -70,8 +66,7 @@
         android:backgroundTint="#3F51B5"
         android:hint="Confirm Password"
         android:inputType="textPassword"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintTop_toBottomOf="@id/etRegPassword" />
 
     <Button

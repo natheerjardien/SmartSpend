@@ -41,14 +41,14 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
         val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
         currentUserId = prefs.getString("CURRENT_USER_ID", "") ?: ""
 
-        if (currentUserId.isNotEmpty()) {
+        if (currentUserId.isNotEmpty()) { // we synchronized specific custom cloud category values and appended them onto our base choice spinner mapping
             dbHelper.getCustomBudgetCategories(currentUserId) { customCategories ->
                 for (cat in customCategories) {
                     if (cat.isNotEmpty() && !baseCategories.contains(cat)) {
                         baseCategories.add(cat)
                     }
                 }
-                runOnUiThread {
+                runOnUiThread { // we populated our dynamic spinner menu dropdown on the UI thread
                     val finalAdapter = ArrayAdapter(this@ExpenseEntryActivity, android.R.layout.simple_spinner_dropdown_item, baseCategories)
                     actvCategory.setAdapter(finalAdapter)
                 }
@@ -83,7 +83,7 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
         }
 
         // we triggered the system document picker to let the user select a receipt photo
-        btnPhoto.setOnClickListener {
+        btnPhoto.setOnClickListener { // we launched system file directories using image intents to collect capture records
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 type = "image/*"
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -93,7 +93,7 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
         }
 
         // we validated the inputs before attempting to save the expense to the database
-        btnSave.setOnClickListener {
+        btnSave.setOnClickListener { // we verified text properties inside mandatory layouts before launching cloud push processes
             val category = actvCategory.text.toString().trim()
             val amount = etAmount.text.toString()
             val date = etDate.text.toString()
@@ -124,12 +124,12 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
     }
 
     // we converted the inputs and stored the expense record in the database
-    private fun saveToDatabase(category: String, amount: String, date: String, description: String) {
+    private fun saveToDatabase(category: String, amount: String, date: String, description: String) { // we processed text entries and transformed dates into numeric long millisecond value
         val db = DatabaseHelper() // No longer requires 'this' context passed in!
 
         val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
 
-        val dateLong = try {
+        val dateLong = try { // we converted human text calendars and used current system time on parsing failures
             val parsedDate = sdf.parse(date)
             val calendar = Calendar.getInstance()
             calendar.time = parsedDate!!
@@ -144,7 +144,8 @@ class ExpenseEntryActivity : AppCompatActivity() { // we created this class to h
 
         val imagePath = selectedImageUri?.toString() ?: ""
 
-        db.addExpense(category, amount.toDouble(), dateLong, description, imagePath) { isSuccess ->
+        // we dispatched our transaction entities straight to secure user branch locations on firebase
+        db.addExpense(currentUserId, category, amount.toDouble(), dateLong, description, imagePath) { isSuccess ->
             runOnUiThread {
                 if (isSuccess) {
                     Toast.makeText(this, "Expense Saved to Firebase!", Toast.LENGTH_SHORT).show()

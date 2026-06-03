@@ -12,7 +12,9 @@ import java.util.*
 // we created this class to allow users to filter their transaction history
 class FilterSearchActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private var currentUserId: String = ""
+
+    override fun onCreate(savedInstanceState: Bundle?) { // we initialized layout views, extracted shared preferences and set up filter button listeners
         super.onCreate(savedInstanceState)
         setContentView(R.layout.filter_search_page) // we linked the activity to the filter search layout
 
@@ -22,13 +24,16 @@ class FilterSearchActivity : AppCompatActivity() {
         val btnSearch = findViewById<Button>(R.id.btnSearch)
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
 
+        val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
+        currentUserId = prefs.getString("CURRENT_USER_ID", "") ?: ""
+
         // we attached date picker dialogs to the start and end date input fields
         etStart.setOnClickListener { showDatePicker(etStart) }
         etEnd.setOnClickListener { showDatePicker(etEnd) }
 
         populateCategorySpinner(spnCategory) // we populated the dropdown menu with existing categories from the database
 
-        btnSearch.setOnClickListener {
+        btnSearch.setOnClickListener { // we handled search submission clicks to process the user selection and launch the filtered history view
             val startDate = etStart.text.toString()
             val endDate = etEnd.text.toString()
             val category = spnCategory.selectedItem?.toString() ?: ""
@@ -94,7 +99,7 @@ class FilterSearchActivity : AppCompatActivity() {
     private fun populateCategorySpinner(spinner: Spinner) { // we fetched unique categories from the database to fill the spinner
         val db = DatabaseHelper()
 
-        db.getUniqueCategories { categoriesFromFirebase ->
+        db.getUniqueCategories(currentUserId) { categoriesFromFirebase ->
             val categories = categoriesFromFirebase.toMutableList()
 
             // we added a placeholder if no expenses have been recorded yet

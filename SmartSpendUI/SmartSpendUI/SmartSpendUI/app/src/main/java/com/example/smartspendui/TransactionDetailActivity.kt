@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 
 // we created this class to display the full details of a specific expense
 class TransactionDetailActivity : AppCompatActivity() {
+    private var currentUserId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +30,9 @@ class TransactionDetailActivity : AppCompatActivity() {
         val tvDate = findViewById<TextView>(R.id.tvDetailDate)
         val ivReceipt = findViewById<ImageView>(R.id.ivFullReceipt)
 
+        val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
+        currentUserId = prefs.getString("CURRENT_USER_ID", "") ?: ""
+
         // we set default placeholder text while the data was being fetched
         tvAmount.text = "R 0.00"
         tvCategory.text = "CATEGORY: N/A"
@@ -40,7 +44,7 @@ class TransactionDetailActivity : AppCompatActivity() {
         // we checked if a valid id was received and queried the database for the specific record
         if (!passedId.isNullOrEmpty())
         {
-            db.getExpenseById(passedId) { expense ->
+            db.getExpenseById(currentUserId, passedId) { expense ->
                 expense?.let {
                     // we populated the ui components with the retrieved expense data
                     tvAmount.text = "R ${String.format("%.2f", it.amount)}"
@@ -75,17 +79,17 @@ class TransactionDetailActivity : AppCompatActivity() {
             tvDesc.text = "Error: Invalid transaction link."
         }
 
-        ivReceipt.setOnClickListener {
+        ivReceipt.setOnClickListener { // we added a tap listener to the receipt image view to trigger photo downloads straight into the media gallery
             // Get the drawable from the ImageView
             val drawable = ivReceipt.drawable
 
-            if (drawable is android.graphics.drawable.BitmapDrawable) {
+            if (drawable is android.graphics.drawable.BitmapDrawable) { // we verified if the image item held a valid bitmap before starting the download sequence
                 val bitmap = drawable.bitmap
 
-                // Generate a unique name for the receipt file
+                // we generated a unique name for the receipt file using the current system timestamp
                 val filename = "Receipt_${System.currentTimeMillis()}.jpg"
 
-                // Call the helper function to save it
+                // we called the helper function to save the media data stream straight into system tables
                 val isSaved = saveImageToGallery(bitmap, filename)
 
                 if (isSaved) {
@@ -106,15 +110,16 @@ class TransactionDetailActivity : AppCompatActivity() {
     }
 
     // we created a method to download the image from the imageView
-    private fun saveImageToGallery(bitmap: android.graphics.Bitmap, filename: String): Boolean {
+    private fun saveImageToGallery(bitmap: android.graphics.Bitmap, filename: String): Boolean { // we created a background helper routine to export bitmap data tracks into public system file folders
         val resolver = contentResolver
+        // we captured the target external primary storage directory location endpoints depending on framework levels
         val imageCollection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             android.provider.MediaStore.Images.Media.getContentUri(android.provider.MediaStore.VOLUME_EXTERNAL_PRIMARY)
         } else {
             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
 
-        val contentValues = android.content.ContentValues().apply {
+        val contentValues = android.content.ContentValues().apply { // we configured system content values and designated the destination path folders
             put(android.provider.MediaStore.Images.Media.DISPLAY_NAME, filename)
             put(android.provider.MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             // Saves it inside the standard 'Pictures/SmartSpend' directory
@@ -127,13 +132,13 @@ class TransactionDetailActivity : AppCompatActivity() {
         val imageUri = resolver.insert(imageCollection, contentValues) ?: return false
 
         return try {
-            resolver.openOutputStream(imageUri).use { outputStream ->
+            resolver.openOutputStream(imageUri).use { outputStream -> // we opened a write file output stream and compressed the raw bitmap canvas down into a jpeg file
                 if (outputStream != null) {
                     bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, outputStream)
                 }
             }
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) { // we cleared the pending state parameter flag to let other apps scan and show the new picture entry
                 contentValues.clear()
                 contentValues.put(android.provider.MediaStore.Images.Media.IS_PENDING, 0)
                 resolver.update(imageUri, contentValues, null, null)

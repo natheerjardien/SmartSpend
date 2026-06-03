@@ -16,8 +16,9 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import android.app.DatePickerDialog
+import android.content.res.ColorStateList
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import java.text.SimpleDateFormat
@@ -28,8 +29,8 @@ import java.util.Locale
 
 class AnalyticsActivity : AppCompatActivity() { // we created the class to handle the financial data visualization
 
-    private val dbHelper = DatabaseHelper()
-    private var currentUserId: String=""
+    private val dbHelper = DatabaseHelper() // calls databasehelper and pulls from Firebase database
+    private var currentUserId: String= ""
 
     private lateinit var rvCategories: RecyclerView
     private lateinit var barChart: BarChart
@@ -73,6 +74,7 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
             "Custom Range"
         )
 
+        // we linked array string resources to list choice spinners dropdowns
         actvPeriod.setAdapter(
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, periods)
         )
@@ -92,6 +94,7 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
         actvPeriod.setText(selectedPeriod, false)
         actvMonth.setText(selectedMonth, false)
 
+        // we monitored dropdown selectors changes to apply time filters dynamically
         actvPeriod.setOnItemClickListener { _, _, position, _ ->
 
             selectedPeriod = periods[position]
@@ -121,6 +124,7 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
             syncCloudAnalyticsData()
         }
 
+        // we checked local shared preferences state keys to find active user token parameters
         val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
         currentUserId = prefs.getString("CURRENT_USER_ID", "") ?: ""
 
@@ -140,14 +144,16 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
         updateProgressBars()
     }
 
-    private fun syncCloudAnalyticsData() {
-        dbHelper.getAllExpenses { expensesList ->
+    //Jahoda (2020) demonstrates how to implement a bar chart
+    private fun syncCloudAnalyticsData() { // we pulled and structured the database metrics to rebuild the graph views
+        dbHelper.getAllExpenses(currentUserId) { expensesList ->
 
             val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
             val now = Calendar.getInstance()
 
-            val filteredExpenses = expensesList.filter { expense ->
+            // we filtered the master transaction records based on the chosen timeframe options
+            val filteredExpenses = expensesList.filter { expense -> // filter transaction lists parameters according to the selected timeline constraints
 
                 val expenseTime = expense.date
 
@@ -212,75 +218,126 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
                 }
             }
 
+            // we grouped expenses by category and computed the subtotal floating point amounts
             val categoryTotalsMap =
                 filteredExpenses
                     .groupBy { it.category }
-                    .mapValues { entry -> entry.value.sumOf { it.amount } }
+                    .mapValues { entry -> entry.value.sumOf { it.amount }.toFloat() }
 
+            // we iterated through all known categories to pull parallel budget boundaries from cloud endpoints
             dbHelper.getCustomBudgetCategories(currentUserId) { customCategories ->
 
                 val allCategories = (categoryTotalsMap.keys + customCategories).distinct().toList()
+
+                if (allCategories.isEmpty()) { // prevents the app from crashing if the graph doesn't have any data to read
+                    runOnUiThread {
+                        rvCategories.adapter = CategoryAdapter(emptyMap()) { }
+
+                        barChart.clear()
+
+                        barChart.setNoDataText("No financial data found. Log an expense or budget goal to begin tracking!")
+                        barChart.setNoDataTextColor(Color.GRAY)
+                        barChart.invalidate()
+                    }
+                    return@getCustomBudgetCategories // Safely exit early
+                }
 
                 val minEntries = ArrayList<BarEntry>()
                 val actualEntries = ArrayList<BarEntry>()
                 val maxEntries = ArrayList<BarEntry>()
 
                 var remainingCategoryQueries = allCategories.size
+                val lock = Any()
+
+                val completeCategoryMap = allCategories.associateWith { category ->
+                    categoryTotalsMap[category] ?: 0f
+                }
 
                 if (remainingCategoryQueries == 0) {
-                    runOnUiThread { rvCategories.adapter = CategoryAdapter(categoryTotalsMap) }
+                    runOnUiThread {
+                        rvCategories.adapter =
+                            CategoryAdapter(categoryTotalsMap) {}
+                    }
                     return@getCustomBudgetCategories
                 }
 
                 for (i in allCategories.indices) {
                     val category = allCategories[i]
                     val actualAmount = categoryTotalsMap[category]?.toFloat() ?: 0f
+                    val currentX = i.toFloat()
 
                     dbHelper.getCategoryBudget(currentUserId, category) { minGoalStr, maxGoalStr ->
                         val minGoal = minGoalStr.toFloatOrNull() ?: 0f
                         val maxGoal = maxGoalStr.toFloatOrNull() ?: 0f
 
-                        // Map entry locations utilizing clean floating point index coordinates
-                        minEntries.add(BarEntry(i.toFloat(), minGoal))
-                        actualEntries.add(BarEntry(i.toFloat(), actualAmount))
-                        maxEntries.add(BarEntry(i.toFloat(), maxGoal))
+                        // we dynamically appended chart coordinates inside a thread-safe synchronized lock
+                        synchronized(lock) {
+                            // map the entry locations using clean floating point index coordinates
+                            minEntries.add(BarEntry(currentX, minGoal))
+                            actualEntries.add(BarEntry(currentX, actualAmount))
+                            maxEntries.add(BarEntry(currentX, maxGoal))
 
-                        remainingCategoryQueries--
+                            remainingCategoryQueries--
 
-                        if (remainingCategoryQueries == 0) {
-                            runOnUiThread {
-                                val adapter = CategoryAdapter(categoryTotalsMap)
-                                rvCategories.adapter = adapter
+                            if (remainingCategoryQueries == 0) {
+                                // we sorted dataset coordinate lists along the horizontal grid scale before drawing
+                                minEntries.sortBy{ it.x }
+                                actualEntries.sortBy{ it.x }
+                                maxEntries.sortBy{ it.x }
 
-                                val minSet = BarDataSet(minEntries, "Min Goal").apply { color = Color.GREEN }
-                                val actualSet = BarDataSet(actualEntries, "Actual Spent").apply { color = Color.BLUE }
-                                val maxSet = BarDataSet(maxEntries, "Max Goal").apply { color = Color.RED }
+                                runOnUiThread {
+                                    // we bound summarized categories and attached navigation click listeners for single category drilling
+                                    val adapter = CategoryAdapter(categoryTotalsMap) { clickedCategory ->
+                                        Log.d("SmartSpend", "Category row clicked: $clickedCategory")
 
-                                val barData = BarData(minSet, actualSet, maxSet)
+                                        val intent = Intent(this@AnalyticsActivity,
+                                            TransactionHistoryActivity::class.java)
+                                        intent.putExtra("CATEGORY_FILTER", clickedCategory)
+                                        startActivity(intent)
+                                    }
+                                    rvCategories.adapter = adapter
 
-                                val groupSpace = 0.28f
-                                val barSpace = 0.04f
-                                val barWidth = 0.20f
+                                    val minSet = BarDataSet(minEntries, "Min Goal").apply { color = Color.GREEN }
+                                    val actualSet = BarDataSet(actualEntries, "Actual Spent").apply { color = Color.BLUE }
+                                    val maxSet = BarDataSet(maxEntries, "Max Goal").apply { color = Color.RED }
 
-                                barData.barWidth = barWidth
-                                barChart.data = barData
+                                    val barData = BarData(minSet, actualSet, maxSet)
 
-                                val xAxis = barChart.xAxis
-                                xAxis.valueFormatter = IndexAxisValueFormatter(allCategories)
-                                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                                xAxis.granularity = 1f
-                                xAxis.setCenterAxisLabels(true)
+                                    val groupSpace = 0.28f
+                                    val barSpace = 0.04f
+                                    val barWidth = 0.20f
 
-                                xAxis.axisMinimum = 0f
-                                xAxis.axisMaximum = 0f + barChart.barData.getGroupWidth(groupSpace, barSpace) * allCategories.size
+                                    barData.barWidth = barWidth
+                                    barChart.data = barData
 
-                                barChart.axisRight.isEnabled = false
-                                barChart.description.isEnabled = false
-                                barChart.setFitBars(true)
+                                    val xAxis = barChart.xAxis
+                                    // we enforced safe array index boundary checks to shield the chart axis labels from crashing
+                                    xAxis.valueFormatter = object : ValueFormatter() {
+                                        override fun getFormattedValue(value: Float): String {
+                                            val index = value.toInt()
+                                            return if (index >= 0 && index < allCategories.size) {
+                                                allCategories[index]
+                                            } else {
+                                                ""
+                                            }
+                                        }
+                                    }
+                                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                                    xAxis.granularity = 1f
+                                    xAxis.setCenterAxisLabels(true)
 
-                                barChart.groupBars(0f, groupSpace, barSpace)
-                                barChart.animateY(1000)
-                                barChart.invalidate()
+                                    xAxis.axisMinimum = 0f
+                                    xAxis.axisMaximum = 0f + barChart.barData.getGroupWidth(groupSpace, barSpace) * allCategories.size
+
+                                    // we styled dataset bars and grouped columns across multi-entry structural calculations
+                                    barChart.axisRight.isEnabled = false
+                                    barChart.description.isEnabled = false
+                                    barChart.setFitBars(true)
+
+                                    barChart.groupBars(0f, groupSpace, barSpace)
+                                    barChart.animateY(1000)
+                                    barChart.invalidate()
+                                }
                             }
                         }
                     }
@@ -289,11 +346,14 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
         }
     }
 
-    private fun updateProgressBars() {
+    private fun updateProgressBars() { // we fetched user income thresholds to track overall budget performance metrics
         val pbGoal = findViewById<ProgressBar>(R.id.pbMonthlyGoal)
         val tvStatus = findViewById<TextView>(R.id.tvGoalStatusText)
 
-        if (currentUserId.isEmpty()) return
+        if (currentUserId.isEmpty())
+        {
+            return
+        }
 
         // Fetch our parent Cash Flow track data metrics profile records from the server node
         dbHelper.getUserProfile(currentUserId) { snapshot ->
@@ -302,10 +362,26 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
                 val monthlySalary = snapshot.child("monthlySalary").value?.toString()?.toDoubleOrNull() ?: 0.0
 
                 // Use monthlySalary as the baseline baseline target parameter tracking floor
-                dbHelper.getTotalSpent("") { totalSpent ->
+                dbHelper.getTotalSpent(currentUserId) { totalSpent ->
                     runOnUiThread {
-                        val percent = if (monthlySalary > 0) ((totalSpent / monthlySalary) * 100).toInt() else 0
-                        pbGoal.progress = percent
+                                               
+                        if (monthlySalary > 0)
+                        {
+                            pbGoal.progress = ((totalSpent / monthlySalary) * 100).toInt()
+                            pbGoal.progressTintList =
+                                ColorStateList.valueOf(Color.parseColor("#00FFFF"))
+
+                            if  (pbGoal.progress >= 100)
+                            {
+                                pbGoal.progressTintList =
+                                    ColorStateList.valueOf(Color.parseColor("#F44336"))
+                            }
+                        }
+                        else
+                        {
+                            pbGoal.progress = 0
+                        }
+
 
                         val healthStatus = when {
                             totalSpent < (monthlySalary * 0.5) -> "Under Budget (Excellent)"
@@ -329,8 +405,10 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
             startActivity(intent)
         }
 
+        // we configured click vectors to handle smooth switching between app activities
         findViewById<Button>(R.id.btnNavHome).setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
+            // we added flags to clear the history stack and refresh the page (refreshes the page instead of creating a new instance everytime)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
         }
@@ -346,7 +424,7 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
         }
     }
 
-    private fun showStartDatePicker() {
+    private fun showStartDatePicker() { // we displayed a native date picker dialog to record custom sequence start times
 
         val calendar = Calendar.getInstance()
 
@@ -367,7 +445,7 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
         ).show()
     }
 
-    private fun showEndDatePicker() {
+    private fun showEndDatePicker() { // we recorded custom sequence end times and initiated data refresh sequences
 
         val calendar = Calendar.getInstance()
 
@@ -391,3 +469,6 @@ class AnalyticsActivity : AppCompatActivity() { // we created the class to handl
 
 // PostHog, 2024.  How to set up analytics in Android. (Version 2.0) [Source code]
 // Available at: < https://posthog.com/tutorials/android-analytics > [Accessed 26 April 2026].
+
+// Jahoda, P., 2020.  MPAndroidChart. (Version 3.1.0) [Source code]
+// Available at: < https://github.com/PhilJay/MPAndroidChart > [Accessed 28 May 2026].

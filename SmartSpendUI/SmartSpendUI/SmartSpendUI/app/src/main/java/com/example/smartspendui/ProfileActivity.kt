@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Log.e
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.bumptech.glide.Glide
 import com.google.firebase.database.FirebaseDatabase
 
@@ -38,6 +40,7 @@ class ProfileActivity : AppCompatActivity() {
         etProfileUsername = findViewById(R.id.etProfileUsername)
         etProfileNewPassword = findViewById(R.id.etProfileNewPassword)
         btnBack = findViewById<ImageButton>(R.id.btnBack)
+        val btnToggleTheme = findViewById<Button>(R.id.btnToggleTheme)
 
         // Read active session parameters from local SharedPreferences caching
         val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
@@ -60,7 +63,7 @@ class ProfileActivity : AppCompatActivity() {
                         selectedImageUri = Uri.parse(profileImageUrl)
 
                         // uses Glide instead of raw setImageURI to keep permissions securely across app reboots
-                        Glide.with(this@ProfileActivity)
+                        Glide.with(this@ProfileActivity) // we loaded the profile photo securely using glide to ensure smooth rendering across app sessions
                             .load(selectedImageUri)
                             .placeholder(android.R.drawable.ic_menu_gallery)
                             .error(android.R.drawable.ic_menu_gallery)
@@ -81,7 +84,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         // Image removal logic
-        findViewById<TextView>(R.id.tvRemovePhoto).setOnClickListener {
+        findViewById<TextView>(R.id.tvRemovePhoto).setOnClickListener { // we handled the profile picture removal request and cleared the reference string from cloud tables
             selectedImageUri = null
             ivLargeProfilePic.setImageResource(android.R.drawable.ic_menu_gallery)
             ivLargeProfilePic.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#5EC7D1"))
@@ -98,7 +101,7 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.btnSaveProfileChanges).setOnClickListener {
+        findViewById<Button>(R.id.btnSaveProfileChanges).setOnClickListener { // we validated username fields, hashed new password entries and synchronized updates with the remote server database
             val inputName = etProfileUsername.text.toString().trim()
             val inputPassword = etProfileNewPassword.text.toString().trim()
 
@@ -134,7 +137,23 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.btnProfileLogout).setOnClickListener {
+        btnToggleTheme.setOnClickListener { // we toggled the user theme setting preference flag and applied night or light configurations immediately
+            val currentPrefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
+            val isDarkModeActive = currentPrefs.getBoolean("IS_DARK_MODE", false)
+
+            val nextThemeSetting = !isDarkModeActive
+            currentPrefs.edit().putBoolean("IS_DARK_MODE", nextThemeSetting).apply()
+
+            if (nextThemeSetting) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                Toast.makeText(this, "Dark Mode Enabled", Toast.LENGTH_SHORT).show()
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                Toast.makeText(this, "Light Mode Enabled", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        findViewById<Button>(R.id.btnProfileLogout).setOnClickListener { // we cleared the local shared preferences session data and routed the user back to the login page screen
             val clearPrefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
             clearPrefs.edit().clear().apply()
 
@@ -153,32 +172,51 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    // we captured the selected gallery image stream, copied it into permanent local storage and updated the remote database path
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 400 && resultCode == RESULT_OK && data != null) {
-            selectedImageUri = data.data
+            val temporaryUri = data.data ?: return
 
-            Glide.with(this)
-                .load(selectedImageUri)
-                .into(ivLargeProfilePic)
+           // Nestsiarenka (2026) demonstrates how to safely store and open user files in android.
 
-            ivLargeProfilePic.imageTintList = null
+            try{
+                val inputStream = contentResolver.openInputStream(temporaryUri)
+                val permanentFile = java.io.File(filesDir, "profile_${currentUserId}.jpg")
+                val outputStream = java.io.FileOutputStream(permanentFile)
 
-            if (currentUserId.isNotEmpty() && selectedImageUri != null) {
-                dbHelper.updateProfileImage(currentUserId, selectedImageUri.toString()) { isSuccess ->
+                inputStream?.copyTo(outputStream)
+                inputStream?.close()
+                outputStream.close()
+
+                val persistentPath = permanentFile.absolutePath
+
+                Glide.with(this)
+                    .load(selectedImageUri)
+                    .into(ivLargeProfilePic)
+
+                ivLargeProfilePic.imageTintList = null
+
+                dbHelper.updateProfileImage(currentUserId, persistentPath) { isSuccess ->
                     if (!isSuccess)
                     {
                         Log.e("SmartSpend", "Failed to update profile image")
                     }
                 }
             }
+            catch (e: Exception){
+                Log.e("SmartSpend", "Error copying profile photo stream: ${e.message}")
+                Toast.makeText(this, "Failed to process selected photo.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    private fun navigateHome() {
+    private fun navigateHome() { // we created an intent to navigate back to the main activity dashboard while clearing the history stack layout
         val homeIntent = Intent(this, MainActivity::class.java)
         homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(homeIntent)
         finish()
     }
 }
+// Nestsiarenka, P., 2026.  How to Safely Store and Open User Files Locally in Android. (Version 2.0) [Source code]
+// Available at: < https://proandroiddev.com/how-to-safely-store-and-open-user-files-locally-in-android-c823c3775cf6 > [Accessed 28 May 2026].

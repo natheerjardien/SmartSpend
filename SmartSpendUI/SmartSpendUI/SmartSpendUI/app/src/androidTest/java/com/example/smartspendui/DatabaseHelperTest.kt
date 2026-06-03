@@ -4,147 +4,290 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.*
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.runner.RunWith
-
-// AndroidDevelopers (2026) demonstrates how to create local unit tests
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class DatabaseHelperTest {
 
     private lateinit var db: DatabaseHelper
+    private fun newUserId() = "test_" + System.currentTimeMillis()
 
     @Before
     fun setup() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = DatabaseHelper(context)
+        db = DatabaseHelper()
     }
 
-    // 1. Test user insertion
+    @After
+    fun tearDown() {
+        // Firebase cannot be fully wiped easily in tests,
+        // but we close references / reset objects
+    }
+
+    // 1. Test Add User
     @Test
     fun testAddUser() {
-        val result = db.addUser("testUser", "1234")
-        assertTrue(result != -1L)
+        val latch = CountDownLatch(1)
+        var result = false
+        val userId = newUserId()
+
+        db.addUser("testUser", "1234", "Test", "User") {
+            result = it
+            latch.countDown()
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
+        assertTrue(result)
     }
 
-    // 2. Test expense insertion
+    // 2. Test Add Expense
     @Test
     fun testAddExpense() {
-        val result = db.addExpense("Food", 50.0, System.currentTimeMillis(), "Lunch", "")
-        assertTrue(result != -1L)
+        val latch = CountDownLatch(1)
+        var result = false
+        val userId = newUserId()
+
+        db.addExpense(userId, "Food", 50.0, System.currentTimeMillis(), "Lunch", "") {
+            result = it
+            latch.countDown()
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
+        assertTrue(result)
     }
 
-    // 3. Test get expense by ID
+    // 3. Test Get Expense By ID
     @Test
     fun testGetExpenseById() {
-        val id = db.addExpense("Food", 30.0, System.currentTimeMillis(), "Test", "")
-        val expense = db.getExpenseById(id.toInt())
-        assertNotNull(expense)
-        assertEquals("Food", expense?.category)
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Food", 30.0, System.currentTimeMillis(), "Test", "") { success ->
+            assertTrue(success)
+
+            db.getAllExpenses(userId) { list ->
+                val expense = list.firstOrNull()
+
+                if (expense != null) {
+                    db.getExpenseById(userId, expense.uid) { result ->
+                        assertNotNull(result)
+                        assertEquals("Food", result?.category)
+                        latch.countDown()
+                    }
+                } else {
+                    latch.countDown()
+                    fail("No expense found")
+                }
+            }
+        }
+
+        latch.await(8, TimeUnit.SECONDS)
     }
 
-    // 4. Test get all expenses
+    // 4. Test Get All Expenses
     @Test
     fun testGetAllExpenses() {
-        db.addExpense("Transport", 20.0, System.currentTimeMillis(), "", "")
-        val cursor = db.getAllExpenses()
-        assertTrue(cursor.count > 0)
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Transport", 20.0, System.currentTimeMillis(), "", "") {
+            db.getAllExpenses(userId) { list ->
+                assertTrue(list.isNotEmpty())
+                latch.countDown()
+            }
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 
-    // 5. Test total spent (all)
+    // 5. Test Total Spent (All)
     @Test
     fun testTotalSpentAll() {
-        db.addExpense("Food", 10.0, System.currentTimeMillis(), "", "")
-        db.addExpense("Food", 20.0, System.currentTimeMillis(), "", "")
-        val total = db.getTotalSpent("")
-        assertTrue(total >= 30.0)
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Food", 10.0, System.currentTimeMillis(), "", "") {
+            db.addExpense(userId, "Food", 20.0, System.currentTimeMillis(), "", "") {
+
+                db.getTotalSpent(userId, "") { total ->
+                    assertEquals(30.0, total, 0.01)
+                    latch.countDown()
+                }
+            }
+        }
+
+        latch.await(8, TimeUnit.SECONDS)
     }
 
-    // 6. Test total spent by category
+    // 6. Test Total Spent by Category
     @Test
     fun testTotalSpentByCategory() {
-        db.addExpense("Groceries", 40.0, System.currentTimeMillis(), "", "")
-        val total = db.getTotalSpent("Groceries")
-        assertTrue(total >= 40.0)
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Groceries", 40.0, System.currentTimeMillis(), "", "") {
+            db.getTotalSpent(userId, "Groceries") { total ->
+                assertEquals(40.0, total, 0.01)
+                latch.countDown()
+            }
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 
-    // 7. Test unique categories
+    // 7. Test Unique Categories
     @Test
     fun testUniqueCategories() {
-        db.addExpense("Bills", 100.0, System.currentTimeMillis(), "", "")
-        val categories = db.getUniqueCategories()
-        assertTrue(categories.contains("Bills"))
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Bills", 100.0, System.currentTimeMillis(), "", "") {
+            db.getUniqueCategories(userId) { categories ->
+                assertTrue(categories.contains("Bills"))
+                latch.countDown()
+            }
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 
-    // 8. Test category totals query
+    // 8. Test Category Totals
     @Test
     fun testCategoryTotals() {
-        db.addExpense("Food", 10.0, System.currentTimeMillis(), "", "")
-        val cursor = db.getCategoryTotals()
-        assertTrue(cursor.count > 0)
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Food", 25.0, System.currentTimeMillis(), "", "") {
+            db.getTotalSpent(userId, "Food") { total ->
+                assertTrue(total > 0)
+                latch.countDown()
+            }
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 
-    // 9. Test date range filtering
+    // 9. Test Date Range Filter
     @Test
     fun testDateRangeFilter() {
+        val latch = CountDownLatch(1)
         val now = System.currentTimeMillis()
-        db.addExpense("Test", 15.0, now, "", "")
-        val cursor = db.getExpensesByDateRange(now - 1000, now + 1000)
-        assertTrue(cursor.count > 0)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Test", 15.0, now, "", "") {
+            db.getExpensesByDateRange(userId, now - 1000, now + 1000) { list ->
+                assertTrue(list.isNotEmpty())
+                latch.countDown()
+            }
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 
-    // 10. Test date + category filtering
+    // 10. Test Date + Category Filter
     @Test
     fun testDateAndCategoryFilter() {
+        val latch = CountDownLatch(1)
         val now = System.currentTimeMillis()
-        db.addExpense("Health", 60.0, now, "", "")
-        val cursor = db.getExpensesByDateAndCategory(now - 1000, now + 1000, "Health")
-        assertTrue(cursor.count > 0)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Health", 60.0, now, "", "") {
+            db.getExpensesByDateAndCategory(userId, now - 1000, now + 1000, "Health") { list ->
+                assertTrue(list.isNotEmpty())
+                latch.countDown()
+            }
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 
-    // 11. Test empty category filter returns nothing
+    // 11. Test Invalid Category Filter
     @Test
     fun testInvalidCategoryFilter() {
+        val latch = CountDownLatch(1)
         val now = System.currentTimeMillis()
-        val cursor = db.getExpensesByDateAndCategory(now - 1000, now + 1000, "NonExistent")
-        assertTrue(cursor.count == 0)
+        val userId = newUserId()
+
+        db.getExpensesByDateAndCategory(userId, now - 1000, now + 1000, "NonExistent") { list ->
+            assertTrue(list.isEmpty())
+            latch.countDown()
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 
-    // 12. Test get all users
+    // 12. Test Get All Users
     @Test
     fun testGetAllUsers() {
-        db.addUser("user1", "pass")
-        val cursor = db.getAllUsers()
-        assertTrue(cursor.count > 0)
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addUser("user1", "pass", "First", "Last") {
+            db.getAllUsers { users ->
+                assertTrue(users.isNotEmpty())
+                latch.countDown()
+            }
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 
-    // 13. Test multiple expenses sum
+    // 13. Test Multiple Expense Sum
     @Test
     fun testMultipleExpenseSum() {
-        db.addExpense("A", 10.0, System.currentTimeMillis(), "", "")
-        db.addExpense("A", 15.0, System.currentTimeMillis(), "", "")
-        val total = db.getTotalSpent("A")
-        assertTrue(total >= 25.0)
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addExpense(userId, "A", 10.0, System.currentTimeMillis(), "", "") {
+            db.addExpense(userId, "A", 15.0, System.currentTimeMillis(), "", "") {
+
+                db.getTotalSpent(userId, "A") { total ->
+                    assertEquals(25.0, total, 0.01)
+                    latch.countDown()
+                }
+            }
+        }
+
+        latch.await(8, TimeUnit.SECONDS)
     }
 
-    // 14. Test expense description saved
+    // 14. Test Expense Description
     @Test
     fun testExpenseDescription() {
-        val id = db.addExpense("Misc", 5.0, System.currentTimeMillis(), "Test Desc", "")
-        val expense = db.getExpenseById(id.toInt())
-        assertEquals("Test Desc", expense?.description)
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Misc", 5.0, System.currentTimeMillis(), "Test Desc", "") {
+            db.getAllExpenses(userId) { list ->
+                val expense = list.firstOrNull()
+
+                assertNotNull(expense)
+                assertEquals("Test Desc", expense?.description)
+                latch.countDown()
+            }
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 
-    // 15. Test image path stored
+    // 15. Test Image Path Stored
     @Test
     fun testImagePathStored() {
-        val id = db.addExpense("Misc", 5.0, System.currentTimeMillis(), "", "path123")
-        val expense = db.getExpenseById(id.toInt())
-        assertEquals("path123", expense?.imagePath)
+        val latch = CountDownLatch(1)
+        val userId = newUserId()
+
+        db.addExpense(userId, "Misc", 5.0, System.currentTimeMillis(), "", "path123") {
+            db.getAllExpenses(userId) { list ->
+                val expense = list.firstOrNull()
+
+                assertNotNull(expense)
+                assertEquals("path123", expense?.imagePath)
+                latch.countDown()
+            }
+        }
+
+        latch.await(5, TimeUnit.SECONDS)
     }
 }
-
-// AndroidDevelopers, 2026. Build local unit tests. (Version 2.0) [Source code]
-// Available at: < https://developer.android.com/training/testing/local-tests > [Accessed 27 April 2026].

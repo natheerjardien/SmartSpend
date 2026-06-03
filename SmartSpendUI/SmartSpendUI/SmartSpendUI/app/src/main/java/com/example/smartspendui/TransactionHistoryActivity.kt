@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 // we created this class to display and manage the chronological list of user expenses
 class TransactionHistoryActivity : AppCompatActivity() {
-
+    private var currentUserId: String = ""
     private lateinit var rvTransactions: RecyclerView
     private lateinit var db: DatabaseHelper
 
@@ -21,6 +21,9 @@ class TransactionHistoryActivity : AppCompatActivity() {
         db = DatabaseHelper()
         rvTransactions = findViewById(R.id.rvTransactionLog)
         rvTransactions.layoutManager = LinearLayoutManager(this)
+
+        val prefs = getSharedPreferences("SmartSpendPrefs", MODE_PRIVATE)
+        currentUserId = prefs.getString("CURRENT_USER_ID", "") ?: ""
 
         // we added a listener to open the filter search activity
         findViewById<Button>(R.id.btnFilter).setOnClickListener {
@@ -46,17 +49,17 @@ class TransactionHistoryActivity : AppCompatActivity() {
         // and attached our UI adapter updates inside the asynchronous lambda callbacks
         when {
             startDate != -1L && endDate != -1L && category.isNotEmpty() && category != "All Categories" -> {
-                db.getExpensesByDateAndCategory(startDate, endDate, category) { filteredList ->
+                db.getExpensesByDateAndCategory(currentUserId, startDate, endDate, category) { filteredList ->
                     updateAdapter(filteredList)
                 }
             }
             startDate != -1L && endDate != -1L -> {
-                db.getExpensesByDateRange(startDate, endDate) { dateRangeList ->
+                db.getExpensesByDateRange(currentUserId, startDate, endDate) { dateRangeList ->
                     updateAdapter(dateRangeList)
                 }
             }
             else -> {
-                db.getAllExpenses { allExpensesList ->
+                db.getAllExpenses(currentUserId) { allExpensesList ->
                     updateAdapter(allExpensesList)
                 }
             }

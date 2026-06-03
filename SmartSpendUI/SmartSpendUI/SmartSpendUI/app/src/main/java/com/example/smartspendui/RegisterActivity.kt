@@ -83,7 +83,7 @@ class RegisterActivity : AppCompatActivity() { // we created this class to handl
 
     }
 
-    object SecurityUtils {
+    object SecurityUtils { // hashes the password
         fun hashPassword(password: String): String {
             return try {
                 // Instantiate a MessageDigest engine running SHA-256

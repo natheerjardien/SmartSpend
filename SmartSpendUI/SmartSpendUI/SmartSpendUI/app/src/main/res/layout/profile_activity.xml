@@ -92,7 +92,7 @@
         android:layout_marginTop="32dp"
 
         android:hint="Update Username"
-        android:textColor="#000000"
+        android:textColor="?android:attr/textColorPrimary"
         android:paddingHorizontal="16dp"
         android:inputType="textPersonName"
         app:layout_constraintTop_toBottomOf="@id/photoActionsContainer"
@@ -105,7 +105,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
         android:hint="Set New Password"
-        android:textColor="#000000"
+        android:textColor="?android:attr/textColorPrimary"
         android:paddingHorizontal="16dp"
         android:inputType="textPassword"
         app:layout_constraintTop_toBottomOf="@id/etProfileUsername"
@@ -117,11 +117,24 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="24dp"
-        android:text="Save Changes"
+        android:text="SAVE CHANGES"
         android:backgroundTint="#2196F3"
         android:textColor="#0F0F1E"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/etProfileNewPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/btnToggleTheme"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:text="SWITCH THEME MODE"
+        android:backgroundTint="#3F51B5"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/btnSaveProfileChanges"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
